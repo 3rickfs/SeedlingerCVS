@@ -1,11 +1,12 @@
 import random
 import time
 from datetime import datetime
-from src.entorno_MODBUS import Config_server_db_brazos
 
 from multiprocessing.managers import ListProxy
 import json
 
+from src.entorno_MODBUS import Config_server_db_brazos
+import seedlinger_cvs 
 
 entorno=Config_server_db_brazos()
 Variable_IR=entorno.Brazo1.Registro_input
@@ -289,12 +290,10 @@ def coodenadas_locales():
 
     if varaible.flag_calculado:
         print("calculando")
-
-
         # TODO: here it comes the seedlinger computer vision system
+        calidad = seedlinger_cvs.run()
 
-
-        proc_cal.calidad=random.randint(1, 3)
+        proc_cal.calidad = calidad #random.randint(1, 3)
         proc_cal.altura=random.uniform(-10, 10)
         proc_cal.angulo=random.uniform(-180, 180)
         proc_cal.agujero=Variable_HR.ind_agujero
