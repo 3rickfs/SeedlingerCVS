@@ -28,8 +28,10 @@ class SIM_calidad:
             self.altura:float=0
             self.angulo:float=0
 
-            self.t_0_0:datetime
-            self.t_0_1:datetime
+            #self.t_0_0:datetime
+            #self.t_0_1:datetime
+            self.t_0_0:float=0.0
+            self.t_0_1:float=0.0
 
             self.has_data:bool=False
 
@@ -275,7 +277,7 @@ def update_bandeja_id():
     else:
         varaible.flag_actualizar=False
 
-def coodenadas_locales():
+def proceso_calidad():
     if varaible.estado.terminado and not varaible.control.iniciar_calidad:
         varaible.estado.set_libre()
         varaible.flag_procesando=False
@@ -286,8 +288,10 @@ def coodenadas_locales():
         varaible.estado.set_trabajando()
         varaible.flag_calculado=True
         varaible.flag_procesando=True
-        proc_cal.t_0_0=datetime.now()
-
+        proc_cal.has_data=False
+        #proc_cal.t_0_0=datetime.now()
+        proc_cal.t_0_0=time.time()
+        
     if varaible.flag_calculado:
         print("calculando")
         # TODO: here it comes the seedlinger computer vision system
@@ -301,11 +305,13 @@ def coodenadas_locales():
         proc_cal.has_data=True
     
     if varaible.flag_procesando:
-        proc_cal.t_0_1=datetime.now()
-        time_Delta=proc_cal.t_0_1-proc_cal.t_0_0
+        #proc_cal.t_0_1=datetime.now()
+        proc_cal.t_0_1=time.time()
+        time_Delta=proc_cal.t_0_1 - proc_cal.t_0_0
         #print(f"time total:{time_Delta}, init:{proc_cal.t_0_0}")
 
-        if time_Delta.seconds>=1 and varaible.estado.trabajando:
+        #if time_Delta.seconds>=1 and varaible.estado.trabajando:
+        if time_Delta>=1.0 and varaible.estado.trabajando:
             #print(f"termino ya: {time_Delta.microseconds}")
             varaible.estado.set_terminado()
             varaible.flag_procesando=False
@@ -339,7 +345,7 @@ def main(list_ir:ListProxy,list_hr:ListProxy,debug=False):
 
             update_bandeja_id()
 
-            coodenadas_locales()
+            proceso_calidad()
 
 
             reset_estado()           
