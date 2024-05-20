@@ -144,7 +144,7 @@ def run():
     #    break
 
     #cv2.destroyAllWindows()
-    return random.randint(1,3)
+    return 1 #random.randint(1,3)
 
 if __name__ == "__main__":
     run()
