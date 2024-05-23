@@ -8,9 +8,11 @@ import time
 SEEDLING_CLASSIFIER_PATH  = '/home/robot/seedlinger/SeedlingerCVS'
 detectors_yolov7_path = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules'
 yolov7_path = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors'
+utils_path = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors/yolov7/models'
 sys.path.append(SEEDLING_CLASSIFIER_PATH)
 sys.path.append(detectors_yolov7_path)
 sys.path.append(yolov7_path)
+sys.path.append(utils_path)
 
 import seedlinger_cvs 
 from seedling_classifier.seedlingnet.modules.detector.detectors.yolo7 import Yolo7
