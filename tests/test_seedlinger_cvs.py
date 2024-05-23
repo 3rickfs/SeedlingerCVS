@@ -9,6 +9,7 @@ SEEDLING_CLASSIFIER_PATH  = '/home/robot/seedlinger/SeedlingerCVS'
 sys.path.append(SEEDLING_CLASSIFIER_PATH)
 
 import seedlinger_cvs 
+from seedling_classifier.seedlingnet.modules.detector.detectors.yolo7 import Yolo7
 
 class distribution_tests(unittest.TestCase):
     def test_create_new_user(self):
