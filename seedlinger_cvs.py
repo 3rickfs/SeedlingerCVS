@@ -13,16 +13,18 @@ sys.path.append('seedling_classifier/seedlingnet/modules/detectors/yolov7')
 
 from seedling_classifier.seedlingnet.modules.detector import Detector
 
+global h_detector, v_detector
 h_detector = ""
 v_detector = ""
-h_wpath = 'seedling_classifier/seedlingnet/modules/' + \
-        'detectors/weights/yolo7-hseed.pt'
-v_wpath = 'seedling_classifier/seedlingnet/modules/' + \
-        'detectors/weights/yolo7-vseed.pt'
-dpath = 'seedling_classifier/seedlingnet/modules/' + \
+h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
+        'detectors/weights/yolov7-hseed.pt'
+v_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
+        'detectors/weights/yolov7-vseed.pt'
+dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
         'detectors/weights/opt.yaml'
 
 def call_yolo_predict(axis, img):
+    global h_detector, v_detector
     if axis == "h":
         if h_detector == "":
             h_detector = Detector(
@@ -31,7 +33,7 @@ def call_yolo_predict(axis, img):
                 data=dpath,
                 device='cuda:0'
             )
-        predictions = h_detector.predict(img_h)
+        predictions = h_detector.predict(img)
     elif axis == "v":
         if v_detector == "":
             v_detector = Detector(
@@ -40,19 +42,19 @@ def call_yolo_predict(axis, img):
                 data=dpath,
                 device='cuda:0'
             )
-        predictions = v_detector.predict(img_h)
+        predictions = v_detector.predict(img)
     else:
         raise Exception("Invalid axis inserted")
 
     return predictions
 
-def print_prediction_info(predictions):
+def print_prediction_info(predictions, img):
     if predictions is None:
-        print('Image Shape:',(img_h.shape), 'does not contains a seedling')
+        print('Image Shape:',(img.shape), 'does not contains a seedling')
     else:
         for pred in predictions:
             x1, y1, x2, y2 = pred.bbox
-            print(f'Image with shape: {img_h.shape}')
+            print(f'Image with shape: {img.shape}')
             print('contains a seedling with bounding box:')
             print(f'{int(x1)}, {int(y1)}, {int(x2)}, {int(y2)}')
 
@@ -127,7 +129,7 @@ def run():
     # horizontal (x) axis prediction
     predictions = call_yolo_predict("h", img)
     # Print prediction info
-    print_prediction_info(predictions)
+    print_prediction_info(predictions, img)
 
     #Camera vertical
     # Capture an imamge
@@ -135,7 +137,7 @@ def run():
     # vertical (z) axis prediction
     predictions = call_yolo_predict("v", img)
     # Print prediction info
-    print_prediction_info(predictions)
+    print_prediction_info(predictions, img)
 
     #cv2.rectangle(img_h, (int(x1), int(y1)), (int(x2), int(y2)), (0,255,0), 2)
 
