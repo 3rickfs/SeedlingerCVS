@@ -35,15 +35,18 @@ def run(show):
 
       
     ret, img_h = cam_h.read()
-    #img_h = cv2.rotate(img_h, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-    predictions = detector.predict(img_h)
+    predictions = detector.predict(img_h, threshold=0.5)
 
     if (predictions is None):
         print('Image Shape:',(img_h.shape), 'does not contains a seedling')
-    else:    
+        return (None, None)
+    else:
         for pred in predictions:
             x1, y1, x2, y2 = pred.bbox
+            #area = (x2-x1)*(y2-y1)
+            #if (x1 + x2)//2 > 250 or area < ((312-255)*(281-201)):
+            #    continue
             result = detector.model.plot_prediction(img_h, predictions)
             print('Image Shape:',(img_h.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
             print('Press any Key to close this window')

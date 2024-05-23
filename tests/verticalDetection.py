@@ -16,7 +16,7 @@ import cv2
 def run():
 
     YOLO7_WEIGHTS_V = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors/weights/yolov7-vseed.pt'
-    assert os.path.isfile(YOLO7_WEIGHTS_V) == True, f'Verificar la existencia del archivo {YOLO7_WEIGHTS_H}'
+    assert os.path.isfile(YOLO7_WEIGHTS_V) == True, f'Verificar la existencia del archivo {YOLO7_WEIGHTS_V}'
 
     detector = Detector('yolo7', 
                         weights=YOLO7_WEIGHTS_V, 
@@ -24,10 +24,10 @@ def run():
                         device='cuda:0')  # eg: 'yolov7' 'maskrcnn'
     
     TEST_IMAGE_V = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors/gallery/vertical-rgb.jpg'
-    assert os.path.isfile(TEST_IMAGE_V) == True, f'Verificar la existencia del archivo {TEST_IMAGE_H}'
+    assert os.path.isfile(TEST_IMAGE_V) == True, f'Verificar la existencia del archivo {TEST_IMAGE_V}'
 
     TEST_MASK_V = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors/gallery/vertical-mask.jpg'
-    assert os.path.isfile(TEST_IMAGE_V) == True, f'Verificar la existencia del archivo {TEST_IMAGE_H}'
+    assert os.path.isfile(TEST_IMAGE_V) == True, f'Verificar la existencia del archivo {TEST_IMAGE_V}'
 
 
     mask = cv2.imread(TEST_MASK_V,0)

@@ -119,12 +119,12 @@ class Detector:
             return
 
 
-    def predict(self, input):
+    def predict(self, input, threshold=0.1):
         if self.model is None:
             warnings.warn('self.Model is a NoneType object, please select an available model')
             return
         
-        predictions = self.model.predict(input)
+        predictions = self.model.predict(input, conf_thres=threshold)
         return predictions
 
 
