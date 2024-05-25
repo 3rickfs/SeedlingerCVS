@@ -80,8 +80,9 @@ def get_type_of_seedling(hp, vp, vm):
     print(f"Result of getting the type of seedling: {tos}")
     return tos
 
-def print_prediction_info(predictions, img):
+def print_prediction_info(predictions, img, top):
     if predictions is None:
+        print(f"Point of view: {top}")
         print('Image Shape:',(img.shape), 'does not contains a seedling')
     else:
         for pred in predictions:
@@ -161,7 +162,7 @@ def run():
     # horizontal (x) axis prediction
     h_predictions = call_yolo_predict("h", img)
     # Print prediction info
-    print_prediction_info(h_predictions, img)
+    print_prediction_info(h_predictions, imgi, 'horizontal')
 
     #Camera vertical
     # Capture an imamge
@@ -169,7 +170,7 @@ def run():
     # vertical (z) axis prediction
     v_predictions = call_yolo_predict("v", img)
     # Print prediction info
-    print_prediction_info(v_predictions, img)
+    print_prediction_info(v_predictions, img, 'vertical')
 
     #Get type of seedling
     tos = get_type_of_seedling(h_predictions, v_predictions, v_mask)
