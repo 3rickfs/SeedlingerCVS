@@ -44,7 +44,7 @@ def run(show):
     pred_bbox = np.array([])
     if (predictions is None):
         print('Image Shape:',(img_h.shape), 'does not contains a seedling')
-    else:    
+    else:
         for pred in predictions:
             x1, y1, x2, y2 = pred.bbox
             result = detector.model.plot_prediction(img_h, predictions)
@@ -52,16 +52,16 @@ def run(show):
             print('Press any Key to close this window')
         pred_mask = pred.mask
         pred_bbox = pred.bbox
-    
+
+        cv2.imshow('horizontal view',img_h)
+        cv2.imshow('horizontal mask',pred.mask*255)
+        cv2.waitKey(0)
+        cam_h.release()
+        cv2.destroyAllWindows()
+
     if not(show):
         return (pred.bbox, pred.mask)
     
-    cv2.imshow('horizontal view',img_h)
-    cv2.imshow('horizontal mask',pred.mask*255)
-    cv2.waitKey(0)
-    cam_h.release()
-    cv2.destroyAllWindows()
-
     return (pred_bbox, pred_mask)
     
 if __name__ == "__main__":
