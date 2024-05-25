@@ -172,7 +172,7 @@ def run():
     print_prediction_info(v_predictions, img)
 
     #Get type of seedling
-    tos = get_type_of_seedling(h_predictions, v_predictionsi, v_mask)
+    tos = get_type_of_seedling(h_predictions, v_predictions, v_mask)
 
     return tos #random.randint(1,3)
 
