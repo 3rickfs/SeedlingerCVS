@@ -162,7 +162,7 @@ def run():
     # horizontal (x) axis prediction
     h_predictions = call_yolo_predict("h", img)
     # Print prediction info
-    print_prediction_info(h_predictions, imgi, 'horizontal')
+    print_prediction_info(h_predictions, img, 'horizontal')
 
     #Camera vertical
     # Capture an imamge
