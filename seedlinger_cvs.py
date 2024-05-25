@@ -66,6 +66,7 @@ def get_type_of_seedling(hp, vp, vm):
             print(f"Seedlings found in V view: {len(vp)}")
         else:
             print("Seedling detected properly")
+            print(f"vp: {vp}")
             v_pred_mask = cv2.resize(
                 vp.mask*255,
                 (vm.shape[1], vm.shape[0]),
