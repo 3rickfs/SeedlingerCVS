@@ -57,7 +57,7 @@ def get_type_of_seedling(hp, vp, vm):
     if hp is None or vp is None:
         tos = 1
     else:
-        if len(hp) > 1 or len(bp) > 1:
+        if len(hp) > 1 or len(vp) > 1:
             print("Issues with number of seedlings detected")
             print(f"Seedlings found in H view: {len(hp)}")
             print(f"Seedlings found in V view: {len(vp)}")
