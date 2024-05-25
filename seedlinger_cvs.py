@@ -10,6 +10,7 @@ sys.path.append('seedling_classifier')
 sys.path.append('seedling_classifier/seedlingnet/modules')
 sys.path.append('seedling_classifier/seedlingnet/modules/detectors')
 sys.path.append('seedling_classifier/seedlingnet/modules/detectors/yolov7')
+sys.path.append('seedling_classifier/seedlingnet/modules/classifiers')
 
 from seedling_classifier.seedlingnet.modules.detector import Detector
 from seedling_classifier.seedlingnet.modules.classifier import Classifier
