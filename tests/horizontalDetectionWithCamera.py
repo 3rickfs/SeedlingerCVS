@@ -59,8 +59,8 @@ def run(show):
         cam_h.release()
         cv2.destroyAllWindows()
 
-    if not(show):
-        return (pred.bbox, pred.mask)
+        if not(show):
+            return (pred.bbox, pred.mask)
     
     return (pred_bbox, pred_mask)
     

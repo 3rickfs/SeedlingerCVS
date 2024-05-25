@@ -79,17 +79,18 @@ def run(show):
             print('Image Shape:',(img.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
             print('Press any Key to close this qq')
         pred_bbox = pred.bbox
+        mask_shape = mask.shape
+        print(mask_shape)
 
-    if not(show):
-        return (pred.bbox, cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR))
+        cv2.imshow('horizontal view',img)
+        cv2.imshow('depth map',mask)
+        cv2.imshow('mask', cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-    mask_shape = mask.shape
-    print(mask_shape)
-    cv2.imshow('horizontal view',img)
-    cv2.imshow('depth map',mask)
-    cv2.imshow('mask', cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        if not(show):
+            return (pred.bbox, cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR))
+
     return (pred_bbox, mask)
  
 

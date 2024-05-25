@@ -34,7 +34,6 @@ def run():
     print('seedling-category:   good:',category, ' bad:', not category)
     return
 
-
 if __name__ == '__main__':
     run()
 
