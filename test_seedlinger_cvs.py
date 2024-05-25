@@ -11,9 +11,9 @@ import time
 
 import seedlinger_cvs
 
-class distribution_tests(unittest.TestCase):
+class test_x_z_runs(unittest.TestCase):
     def test_create_new_user(self):
-        print("Test 1: Create new user in Brain")
+        print("Test 1: test x and z axis detections")
         res = seedlinger_cvs.run()
         expected_res = 1
         self.assertEqual(res, expected_res)
