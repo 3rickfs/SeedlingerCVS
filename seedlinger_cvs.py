@@ -29,6 +29,7 @@ dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/mo
 def call_yolo_predict(axis, img):
     global h_detector, v_detector
     if axis == "h":
+        print("Getting predictions for horizontal poit of view")
         if h_detector == "":
             h_detector = Detector(
                 'yolo7',
@@ -38,6 +39,7 @@ def call_yolo_predict(axis, img):
             )
         predictions = h_detector.predict(img)
     elif axis == "v":
+        print("Getting predictions for vertical poit of view")
         if v_detector == "":
             v_detector = Detector(
                 'yolo7',
@@ -49,6 +51,7 @@ def call_yolo_predict(axis, img):
     else:
         raise Exception("Invalid axis inserted")
 
+    print(f"Prediction result: {predictions}")
     return predictions
 
 def get_type_of_seedling(hp, vp, vm):
