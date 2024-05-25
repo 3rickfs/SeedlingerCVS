@@ -12,10 +12,12 @@ sys.path.append('seedling_classifier/seedlingnet/modules/detectors')
 sys.path.append('seedling_classifier/seedlingnet/modules/detectors/yolov7')
 
 from seedling_classifier.seedlingnet.modules.detector import Detector
+from seedling_classifier.seedlingnet.modules.classifier import Classifier
 
-global h_detector, v_detector
+global h_detector, v_detector, linear
 h_detector = ""
 v_detector = ""
+linear = ""
 h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
         'detectors/weights/yolov7-hseed.pt'
 v_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
@@ -47,6 +49,35 @@ def call_yolo_predict(axis, img):
         raise Exception("Invalid axis inserted")
 
     return predictions
+
+def get_type_of_seedling(hp, vp, vm):
+    global linear
+    tos = 0
+    if hp or vp is None:
+        tos = 1
+    else:
+        if len(hp) > 1 or len(bp) > 1:
+            print("Issues with number of seedlings detected")
+            print(f"Seedlings found in H view: {len(hp)}")
+            print(f"Seedlings found in V view: {len(vp)}")
+        else:
+            print("Seedling detected properly")
+            v_pred_mask = cv2.resize(
+                vp.mask*255,
+                (vm.shape[1], vm.shape[0]),
+                interpolation=cv2.INTER_LINEAR
+            )
+            h_pred_mask = hp.mask
+            #load the model if necessary
+            if linear == "":
+                linear = Classifier('linear',CLASSIFIER_WEIGHTS)
+            category = linear.predict(h_pred_mask, v_pred_mask)
+            if category:
+                tos = 3
+            else:
+                tos = 2
+    print(f"Result of getting the type of seedling: {tos}")
+    return tos
 
 def print_prediction_info(predictions, img):
     if predictions is None:
@@ -119,7 +150,7 @@ def init_and_capture_v_cam():
 
     img = cv2.bitwise_and(img,img,mask=mask)
 
-    return img
+    return img, mask
 
 def run():
     #Camara horizontal
@@ -127,26 +158,22 @@ def run():
     # Capture an image
     ret, img = cam_h.read()
     # horizontal (x) axis prediction
-    predictions = call_yolo_predict("h", img)
+    h_predictions = call_yolo_predict("h", img)
     # Print prediction info
-    print_prediction_info(predictions, img)
+    print_prediction_info(h_predictions, img)
 
     #Camera vertical
     # Capture an imamge
-    img = init_and_capture_v_cam()
+    img, v_mask = init_and_capture_v_cam()
     # vertical (z) axis prediction
-    predictions = call_yolo_predict("v", img)
+    v_predictions = call_yolo_predict("v", img)
     # Print prediction info
-    print_prediction_info(predictions, img)
+    print_prediction_info(v_predictions, img)
 
-    #cv2.rectangle(img_h, (int(x1), int(y1)), (int(x2), int(y2)), (0,255,0), 2)
+    #Get type of seedling
+    tos = get_type_of_seedling(h_predictions, v_predictionsi, v_mask)
 
-    #cv2.imshow('awd',img_h)
-    #if cv2.waitKey(1) & 0xFF == ord('q'):
-    #    break
-
-    #cv2.destroyAllWindows()
-    return 1 #random.randint(1,3)
+    return tos #random.randint(1,3)
 
 if __name__ == "__main__":
     run()
