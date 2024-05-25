@@ -298,8 +298,10 @@ def proceso_calidad():
         calidad = seedlinger_cvs.run()
 
         proc_cal.calidad = calidad #random.randint(1, 3)
+
         proc_cal.altura=random.uniform(-10, 10)
         proc_cal.angulo=random.uniform(-180, 180)
+        
         proc_cal.agujero=Variable_HR.ind_agujero
         varaible.flag_calculado=False
         proc_cal.has_data=True
@@ -308,7 +310,7 @@ def proceso_calidad():
         #proc_cal.t_0_1=datetime.now()
         proc_cal.t_0_1=time.time()
         time_Delta=proc_cal.t_0_1 - proc_cal.t_0_0
-        #print(f"time total:{time_Delta}, init:{proc_cal.t_0_0}")
+        print(f"time total:{time_Delta}, init:{proc_cal.t_0_0}")
 
         #if time_Delta.seconds>=1 and varaible.estado.trabajando:
         if time_Delta>=1.0 and varaible.estado.trabajando:

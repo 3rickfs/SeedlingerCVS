@@ -40,7 +40,7 @@ def run(show):
 
     if (predictions is None):
         print('Image Shape:',(img_h.shape), 'does not contains a seedling')
-        return (None, None)
+        #return (None, None)
     else:
         for pred in predictions:
             x1, y1, x2, y2 = pred.bbox
@@ -56,10 +56,14 @@ def run(show):
         return (pred.bbox, pred.mask)
     
     cv2.imshow('horizontal view',img_h)
-    cv2.imshow('horizontal mask',pred.mask*255)
+    #cv2.imshow('horizontal mask',pred.mask*255)
     cv2.waitKey(0)
     cam_h.release()
     cv2.destroyAllWindows()
+
+    if (predictions is None):
+        print('Image Shape:',(img_h.shape), 'does not contains a seedling')
+        #return (None, None)
 
     return (pred.bbox, pred.mask)
     
