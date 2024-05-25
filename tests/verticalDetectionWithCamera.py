@@ -52,7 +52,6 @@ def run(show):
     camera.retrieve_image(image, sl.VIEW.LEFT)
     numpy_image = image.get_data()
     img = numpy_image[:,:,0:3]
-    complete_image = img
     img = img[290:890, 670:1550,:]
 
     assert len(img.shape) == 3, f'Verificar que se reciba una imagen RGB, se recibe {img.shape}'
@@ -69,30 +68,29 @@ def run(show):
                         device='cuda:0')  # eg: 'yolov7' 'maskrcnn'
     
     predictions = detector.predict(img)
-    
+
+    pred_bbox = {}
     if (predictions is None):
         print('Image Shape:',(img.shape), 'does not contains a seedling')
-        return (None, None)
     else:
         for pred in predictions:
             x1, y1, x2, y2 = pred.bbox
             result = detector.model.plot_prediction(img, predictions)
             print('Image Shape:',(img.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
             print('Press any Key to close this qq')
+        pred_bbox = pred.bbox
 
-    mask_shape = mask.shape
     if not(show):
         return (pred.bbox, cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR))
 
-    
+    mask_shape = mask.shape
     print(mask_shape)
     cv2.imshow('horizontal view',img)
-    cv2.imshow('depth map',gray)
-    #cv2.imshow('complete_img',complete_image)
+    cv2.imshow('depth map',mask)
     cv2.imshow('mask', cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR))
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    return (pred.bbox, pred.mask)
+    return (pred_bbox, mask)
  
 
 if __name__ == "__main__":

@@ -22,9 +22,12 @@ def run():
     bboxv, verticalMask = getVerticalMask(show=True)
 
     CLASSIFIER_WEIGHTS = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/classifiers/weights/linearModel.pt'
-    assert os.path.isfile(CLASSIFIER_WEIGHTS) == True, f'Verificar la existencia del archivo {CLASSIFIER_WEIGHTS}'
-    assert len(horizontalMask.shape) == 2, f'Verificar la camara horizontal'
-    assert len(verticalMask.shape) == 2, f'Verificar la camara vertical'
+    assert os.path.isfile(CLASSIFIER_WEIGHTS) == True, \
+            f'Verificar la existencia del archivo {CLASSIFIER_WEIGHTS}'
+    assert len(horizontalMask.shape) == 2, \
+            f'No seedling detected, horizontal. Or check h-camera'
+    assert len(verticalMask.shape) == 2, \
+            f'No seedling detected, vertical. Or check v-camera'
 
     linear = Classifier('linear',CLASSIFIER_WEIGHTS)
     category = linear.predict(horizontalMask, verticalMask)
