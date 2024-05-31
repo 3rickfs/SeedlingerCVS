@@ -2,6 +2,7 @@ import os
 import sys
 import warnings
 import random
+from datetime import datetime
 
 import cv2
 import pyzed.sl as sl
@@ -162,11 +163,35 @@ def init_and_capture_v_cam():
 
     return img, mask
 
+def save_image(img, mask=None):
+    try:
+        cdt = datetime.now()
+        fn = cdt.replace(" ", "_")
+        fn = fn.replace(":", "-")
+        fn += ".jpg"
+        if mask is None: 
+            fn = "v-" + fn
+            imgpath = os.getcwd() + "/" + fn
+            cv2.imwrite(imgpath, img)
+        else: #img with mask
+            fn = "h-" + fn
+            imgpath = os.getcwd() + "/" + fn
+            cv2.imwrite(imgpath, img)
+            mn = fn.split(".jpg")[0] + "mask" + ".jpg"
+            imgpath = os.getcwd() + "/" + mn
+            cv2.imwrite(imgpath, mask)
+    except Exception as e:
+        print(f"ERROR found when saving the image: {e}")
+
+    return True
+
 def run():
     #Camara horizontal
     cam_h = init_h_cam()
     # Capture an image
     ret, img = cam_h.read()
+    # Save image
+    #save_image(img)
     # horizontal (x) axis prediction
     h_predictions = call_yolo_predict("h", img)
     # Print prediction info
@@ -175,6 +200,8 @@ def run():
     #Camera vertical
     # Capture an imamge
     img, v_mask = init_and_capture_v_cam()
+    # Save image
+    #save_image(img, v_mask)
     # vertical (z) axis prediction
     v_predictions = call_yolo_predict("v", img)
     # Print prediction info
