@@ -208,11 +208,61 @@ def save_image(h_img, v_img, mask=None):
 
     return True
 
+def save_image_h(h_img):
+    try:
+        cdt = str(datetime.now())
+        fn = cdt.replace(" ", "_")
+        fn = fn.replace(":", "-")
+        fn += ".jpg"
+
+        fn2 = "h-" + fn
+        imgpath = os.getcwd() + "/imagenes/horizontal/" + fn2
+        cv2.imwrite(imgpath, h_img)
+       
+    except Exception as e:
+        print(f"ERROR found when saving the image H: {e}")
+
+    return True
+
+def save_image_v(v_img):
+    try:
+        cdt = str(datetime.now())
+        fn = cdt.replace(" ", "_")
+        fn = fn.replace(":", "-")
+        fn += ".jpg"
+        fn2= fn
+        #if mask is None: 
+        fn1 = "v-" + fn
+        imgpath = os.getcwd() + "/imagenes/vertical/" + fn1
+        cv2.imwrite(imgpath, v_img)
+       
+    except Exception as e:
+        print(f"ERROR found when saving the image V: {e}")
+
+    return True
+
+def save_image_MASK(mask):
+    try:
+        cdt = str(datetime.now())
+        fn = cdt.replace(" ", "_")
+        fn = fn.replace(":", "-")
+        fn += ".jpg"
+
+        fnv= "v-mask-" + fn
+        imgpath = os.getcwd() + "/imagenes/vertical/" + fnv
+        cv2.imwrite(imgpath, mask)
+       
+    except Exception as e:
+        print(f"ERROR found when saving the image V MASK: {e}")
+
+    return True
+
 def run():
     #Camara horizontal
     cam_h = init_h_cam()
     # Capture an image
     ret, h_img = cam_h.read()
+    save_image_h(h_img)
     # horizontal (x) axis prediction
     h_predictions, _ = call_yolo_predict("h", h_img)
     # Print prediction info
@@ -221,6 +271,8 @@ def run():
     #Camera vertical
     # Capture an imamge
     v_img, v_mask = init_and_capture_v_cam()
+    save_image_v(v_img)
+    save_image_MASK(v_mask)
     # vertical (z) axis prediction
     v_predictions, v_pmask = call_yolo_predict("v", v_img, v_mask)
     # Print prediction info
