@@ -30,8 +30,9 @@ dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/mo
 lmp = '/seedling_classifier/seedlingnet/modules/classifiers/weights/linearModel.pt'
 CLASSIFIER_WEIGHTS = os.getcwd() + lmp
 
-def call_yolo_predict(axis, img):
+def call_yolo_predict(axis, img, mask=None):
     global h_detector, v_detector
+    v_pmask = None
     if axis == "h":
         print("Getting predictions for horizontal poit of view")
         if h_detector == "":
@@ -52,11 +53,17 @@ def call_yolo_predict(axis, img):
                 device='cuda:0'
             )
         predictions = v_detector.predict(img)
+        if len(predictions) < 2: 
+            v_pmask = cv2.resize(
+                predictions.mask*255,
+                (mask.shape[1], mask.shape[0]),
+                interpolation=cv2.INTER_LINEAR
+            )
     else:
         raise Exception("Invalid axis inserted")
 
     print(f"Prediction result: {predictions}")
-    return predictions
+    return predictions, v_pmask
 
 def get_type_of_seedling(hp, vp, vm):
     global linear
@@ -80,12 +87,12 @@ def get_type_of_seedling(hp, vp, vm):
             print("*"*100)
 
             v_pred_mask = cv2.resize(
-                v.mask*255,
+                vm*255,
                 (vm.shape[1], vm.shape[0]),
                 interpolation=cv2.INTER_LINEAR
             )
 
-            h_pred_mask = h.mask
+            h_pred_mask = hp.mask
 
             #load the model if necessary
             if linear == "":
@@ -206,7 +213,7 @@ def run():
     # Save image
     #save_image(img)
     # horizontal (x) axis prediction
-    h_predictions = call_yolo_predict("h", img)
+    h_predictions, _ = call_yolo_predict("h", img)
     # Print prediction info
     print_prediction_info(h_predictions, img, 'horizontal')
 
@@ -216,12 +223,12 @@ def run():
     # Save image
     #save_image(img, v_mask)
     # vertical (z) axis prediction
-    v_predictions = call_yolo_predict("v", img)
+    v_predictions, v_pmask = call_yolo_predict("v", imgi, v_mask)
     # Print prediction info
     print_prediction_info(v_predictions, img, 'vertical')
 
     #Get type of seedling
-    tos = get_type_of_seedling(h_predictions, v_predictions, v_mask)
+    tos = get_type_of_seedling(h_predictions, v_predictions, v_pmask)
 
     return tos #random.randint(1,3)
 
