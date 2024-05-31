@@ -55,7 +55,7 @@ def call_yolo_predict(axis, img, mask=None):
         predictions = v_detector.predict(img)
         if len(predictions) < 2: 
             v_pmask = cv2.resize(
-                predictions.mask*255,
+                predictions[0].mask*255,
                 (mask.shape[1], mask.shape[0]),
                 interpolation=cv2.INTER_LINEAR
             )
