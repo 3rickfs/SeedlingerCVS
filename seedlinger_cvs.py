@@ -53,13 +53,14 @@ def call_yolo_predict(axis, img, mask=None):
                 device='cuda:0'
             )
         predictions = v_detector.predict(img)
-        pl = len(predictions)
-        if pl == 1:
-            v_pmask = cv2.resize(
-                predictions[0].mask*255,
-                (mask.shape[1], mask.shape[0]),
-                interpolation=cv2.INTER_LINEAR
-            )
+        if predictions is not None:
+            pl = len(predictions)
+            if pl == 1:
+                v_pmask = cv2.resize(
+                    predictions[0].mask*255,
+                    (mask.shape[1], mask.shape[0]),
+                    interpolation=cv2.INTER_LINEAR
+                )
     else:
         raise Exception("Invalid axis inserted")
 
