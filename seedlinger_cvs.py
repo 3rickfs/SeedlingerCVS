@@ -186,7 +186,7 @@ def init_and_capture_v_cam():
 
 def save_image(h_img, v_img, mask=None):
     try:
-        cdt = datetime.now()
+        cdt = str(datetime.now())
         fn = cdt.replace(" ", "_")
         fn = fn.replace(":", "-")
         fn += ".jpg"
