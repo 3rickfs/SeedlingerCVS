@@ -63,37 +63,43 @@ def get_type_of_seedling(hp, vp, vm):
     tos = 0
     if hp is None or vp is None:
         tos = 1
+        print("*"*100)
+        print("NOT SEEDLING DETECTED")
+        print("*"*100)
+
     else:
         if len(hp) > 1 or len(vp) > 1:
+            print("*"*100)
             print("Issues with number of seedlings detected")
             print(f"Seedlings found in H view: {len(hp)}")
             print(f"Seedlings found in V view: {len(vp)}")
+            print("*"*100)
         else:
+            print("*"*100)
             print("Seedling detected properly")
-            print(f"vp: {vp}")
+            print("*"*100)
 
-            #for v in vp:
             v_pred_mask = cv2.resize(
                 v.mask*255,
                 (vm.shape[1], vm.shape[0]),
                 interpolation=cv2.INTER_LINEAR
             )
-            #    break
 
-            #for h in hp:
             h_pred_mask = h.mask
-            #    break
 
             #load the model if necessary
             if linear == "":
                 linear = Classifier('linear',CLASSIFIER_WEIGHTS)
+            #get prediction
             category = linear.predict(h_pred_mask, v_pred_mask)
 
             if category:
                 tos = 3
             else:
                 tos = 2
+    print("*"*100)
     print(f"Result of getting the type of seedling: {tos}")
+    print("*"*100)
     return tos
 
 def print_prediction_info(predictions, img, top):
