@@ -223,7 +223,7 @@ def run():
     # Save image
     #save_image(img, v_mask)
     # vertical (z) axis prediction
-    v_predictions, v_pmask = call_yolo_predict("v", imgi, v_mask)
+    v_predictions, v_pmask = call_yolo_predict("v", img, v_mask)
     # Print prediction info
     print_prediction_info(v_predictions, img, 'vertical')
 
