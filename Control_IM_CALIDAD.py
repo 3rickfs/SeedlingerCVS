@@ -48,25 +48,30 @@ class Variables_Control:
 
         def set_libre(self):
             if not self.falla:
+                print("SET LIBRE")
                 self.libre      =True
                 self.trabajando =False
                 self.terminado  =False
         def set_trabajando(self):
             if not self.falla:
+                print("SET TRABAJANDO")
                 self.libre      =False
                 self.trabajando =True
                 self.terminado  =False
         def set_terminado(self):
             if not self.falla:
+                print("SET TERMINADO")
                 self.libre      =False
                 self.trabajando =False
                 self.terminado  =True
         def set_fallo(self):
+            print("SET FALLA")
             self.libre      =False
             self.trabajando =False
             self.terminado  =False
             self.falla      =True
         def caso_reset(self):
+            print("SET RESET")
             self.libre      =False
             self.trabajando =False
             self.terminado  =False
@@ -283,6 +288,30 @@ def proceso_calidad():
         varaible.flag_procesando=False
         varaible.flag_calculado=False
 
+    
+        
+    if varaible.flag_calculado and varaible.estado.trabajando:
+        print("calculando")
+        # TODO: here it comes the seedlinger computer vision system
+        try:
+            calidad = seedlinger_cvs.run()
+        except Exception as error:
+            calidad = 0
+            print("PROBLEMA IMAGEN, AVISAR ERICK: ",type(error).__name__)
+            
+
+        proc_cal.calidad = calidad #random.randint(1, 3)
+
+        #proc_cal.altura=random.uniform(-10, 10)
+        #proc_cal.angulo=random.uniform(-180, 180)
+
+        proc_cal.altura=0
+        proc_cal.angulo=0
+        
+        proc_cal.agujero=Variable_HR.ind_agujero
+        varaible.flag_calculado=False
+        proc_cal.has_data=True
+    
     if varaible.control.iniciar_calidad and not varaible.control.reset and varaible.estado.libre:
         print ("inicio")
         varaible.estado.set_trabajando()
@@ -291,20 +320,6 @@ def proceso_calidad():
         proc_cal.has_data=False
         #proc_cal.t_0_0=datetime.now()
         proc_cal.t_0_0=time.time()
-        
-    if varaible.flag_calculado:
-        print("calculando")
-        # TODO: here it comes the seedlinger computer vision system
-        calidad = seedlinger_cvs.run()
-
-        proc_cal.calidad = calidad #random.randint(1, 3)
-
-        proc_cal.altura=random.uniform(-10, 10)
-        proc_cal.angulo=random.uniform(-180, 180)
-        
-        proc_cal.agujero=Variable_HR.ind_agujero
-        varaible.flag_calculado=False
-        proc_cal.has_data=True
     
     if varaible.flag_procesando:
         #proc_cal.t_0_1=datetime.now()

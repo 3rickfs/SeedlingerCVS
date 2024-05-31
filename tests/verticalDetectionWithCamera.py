@@ -53,6 +53,7 @@ def run(show):
     numpy_image = image.get_data()
     img = numpy_image[:,:,0:3]
     img = img[290:890, 670:1550,:]
+    img_original = img
 
     assert len(img.shape) == 3, f'Verificar que se reciba una imagen RGB, se recibe {img.shape}'
     
@@ -71,6 +72,12 @@ def run(show):
 
     pred_bbox = {}
     pred_mask = {}
+
+    cv2.imshow('img', img_original)
+    cv2.imshow('depth map',gray)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     if (predictions is None):
         print('Image Shape:',(img.shape), 'does not contains a seedling')
     else:
@@ -79,6 +86,7 @@ def run(show):
             result = detector.model.plot_prediction(img, predictions)
             print('Image Shape:',(img.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
             print('Press any Key to close this qq')
+
         pred_bbox = pred.bbox
         mask_shape = mask.shape
         pred_mask = cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR)
@@ -86,7 +94,6 @@ def run(show):
 
         cv2.imshow('horizontal view',img)
         cv2.imshow('depth map',mask)
-        cv2.imshow('mask', cv2.resize(pred.mask*255, pred_mask))
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
