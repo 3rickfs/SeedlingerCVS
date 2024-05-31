@@ -54,7 +54,7 @@ def call_yolo_predict(axis, img, mask=None):
             )
         predictions = v_detector.predict(img)
         if predictions is not None:
-            #there is predictions
+            #there is v predictions
             pl = len(predictions)
             if pl == 1:
                 v_pmask = cv2.resize(
