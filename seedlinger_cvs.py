@@ -190,16 +190,18 @@ def save_image(h_img, v_img, mask=None):
         fn = cdt.replace(" ", "_")
         fn = fn.replace(":", "-")
         fn += ".jpg"
+        fn1= fn
+        fn2= fn
         #if mask is None: 
-        fn = "v-" + fn
-        imgpath = os.getcwd() + "/" + fn
+        fn = "v-" + fn1
+        imgpath = os.getcwd() + "/imagenes/" + fn
         cv2.imwrite(imgpath, v_img)
         #else: #img with mask
-        fn = "h-" + fn
-        imgpath = os.getcwd() + "/" + fn
+        fn = "h-" + fn2
+        imgpath = os.getcwd() + "/imagenes/" + fn
         cv2.imwrite(imgpath, h_img)
         mn = fn.split(".jpg")[0] + "mask" + ".jpg"
-        imgpath = os.getcwd() + "/" + mn
+        imgpath = os.getcwd() + "/imagenes/" + mn
         cv2.imwrite(imgpath, mask)
     except Exception as e:
         print(f"ERROR found when saving the image: {e}")
