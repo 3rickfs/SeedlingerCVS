@@ -2,6 +2,7 @@ import os
 import sys
 import warnings
 import random
+from datetime import datetime
 
 import cv2
 import pyzed.sl as sl
@@ -25,6 +26,9 @@ v_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/
         'detectors/weights/yolov7-vseed.pt'
 dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
         'detectors/weights/opt.yaml'
+
+lmp = '/seedling_classifier/seedlingnet/modules/classifiers/weights/linearModel.pt'
+CLASSIFIER_WEIGHTS = os.get_cwd() + lmp
 
 def call_yolo_predict(axis, img):
     global h_detector, v_detector
@@ -67,20 +71,24 @@ def get_type_of_seedling(hp, vp, vm):
         else:
             print("Seedling detected properly")
             print(f"vp: {vp}")
-            for v in vp:
-                v_pred_mask = cv2.resize(
-                    v.mask*255,
-                    (vm.shape[1], vm.shape[0]),
-                    interpolation=cv2.INTER_LINEAR
-                )
-                break
-            for h in hp:
-                h_pred_mask = h.mask
-                break
+
+            #for v in vp:
+            v_pred_mask = cv2.resize(
+                v.mask*255,
+                (vm.shape[1], vm.shape[0]),
+                interpolation=cv2.INTER_LINEAR
+            )
+            #    break
+
+            #for h in hp:
+            h_pred_mask = h.mask
+            #    break
+
             #load the model if necessary
             if linear == "":
                 linear = Classifier('linear',CLASSIFIER_WEIGHTS)
             category = linear.predict(h_pred_mask, v_pred_mask)
+
             if category:
                 tos = 3
             else:
@@ -162,11 +170,35 @@ def init_and_capture_v_cam():
 
     return img, mask
 
+def save_image(img, mask=None):
+    try:
+        cdt = datetime.now()
+        fn = cdt.replace(" ", "_")
+        fn = fn.replace(":", "-")
+        fn += ".jpg"
+        if mask is None: 
+            fn = "v-" + fn
+            imgpath = os.getcwd() + "/" + fn
+            cv2.imwrite(imgpath, img)
+        else: #img with mask
+            fn = "h-" + fn
+            imgpath = os.getcwd() + "/" + fn
+            cv2.imwrite(imgpath, img)
+            mn = fn.split(".jpg")[0] + "mask" + ".jpg"
+            imgpath = os.getcwd() + "/" + mn
+            cv2.imwrite(imgpath, mask)
+    except Exception as e:
+        print(f"ERROR found when saving the image: {e}")
+
+    return True
+
 def run():
     #Camara horizontal
     cam_h = init_h_cam()
     # Capture an image
     ret, img = cam_h.read()
+    # Save image
+    #save_image(img)
     # horizontal (x) axis prediction
     h_predictions = call_yolo_predict("h", img)
     # Print prediction info
@@ -175,6 +207,8 @@ def run():
     #Camera vertical
     # Capture an imamge
     img, v_mask = init_and_capture_v_cam()
+    # Save image
+    #save_image(img, v_mask)
     # vertical (z) axis prediction
     v_predictions = call_yolo_predict("v", img)
     # Print prediction info
