@@ -28,7 +28,7 @@ dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/mo
         'detectors/weights/opt.yaml'
 
 lmp = '/seedling_classifier/seedlingnet/modules/classifiers/weights/linearModel.pt'
-CLASSIFIER_WEIGHTS = os.get_cwd() + lmp
+CLASSIFIER_WEIGHTS = os.getcwd() + lmp
 
 def call_yolo_predict(axis, img):
     global h_detector, v_detector
