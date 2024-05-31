@@ -68,20 +68,24 @@ def get_type_of_seedling(hp, vp, vm):
         else:
             print("Seedling detected properly")
             print(f"vp: {vp}")
-            for v in vp:
-                v_pred_mask = cv2.resize(
-                    v.mask*255,
-                    (vm.shape[1], vm.shape[0]),
-                    interpolation=cv2.INTER_LINEAR
-                )
-                break
-            for h in hp:
-                h_pred_mask = h.mask
-                break
+
+            #for v in vp:
+            v_pred_mask = cv2.resize(
+                v.mask*255,
+                (vm.shape[1], vm.shape[0]),
+                interpolation=cv2.INTER_LINEAR
+            )
+            #    break
+
+            #for h in hp:
+            h_pred_mask = h.mask
+            #    break
+
             #load the model if necessary
             if linear == "":
                 linear = Classifier('linear',CLASSIFIER_WEIGHTS)
             category = linear.predict(h_pred_mask, v_pred_mask)
+
             if category:
                 tos = 3
             else:
