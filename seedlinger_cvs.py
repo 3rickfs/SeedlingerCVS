@@ -184,23 +184,23 @@ def init_and_capture_v_cam():
 
     return img, mask
 
-def save_image(img, mask=None):
+def save_image(h_img, v_img, mask=None):
     try:
         cdt = datetime.now()
         fn = cdt.replace(" ", "_")
         fn = fn.replace(":", "-")
         fn += ".jpg"
-        if mask is None: 
-            fn = "v-" + fn
-            imgpath = os.getcwd() + "/" + fn
-            cv2.imwrite(imgpath, img)
-        else: #img with mask
-            fn = "h-" + fn
-            imgpath = os.getcwd() + "/" + fn
-            cv2.imwrite(imgpath, img)
-            mn = fn.split(".jpg")[0] + "mask" + ".jpg"
-            imgpath = os.getcwd() + "/" + mn
-            cv2.imwrite(imgpath, mask)
+        #if mask is None: 
+        fn = "v-" + fn
+        imgpath = os.getcwd() + "/" + fn
+        cv2.imwrite(imgpath, img)
+        #else: #img with mask
+        fn = "h-" + fn
+        imgpath = os.getcwd() + "/" + fn
+        cv2.imwrite(imgpath, img)
+        mn = fn.split(".jpg")[0] + "mask" + ".jpg"
+        imgpath = os.getcwd() + "/" + mn
+        cv2.imwrite(imgpath, mask)
     except Exception as e:
         print(f"ERROR found when saving the image: {e}")
 
@@ -210,28 +210,26 @@ def run():
     #Camara horizontal
     cam_h = init_h_cam()
     # Capture an image
-    ret, img = cam_h.read()
-    # Save image
-    #save_image(img)
+    ret, h_img = cam_h.read()
     # horizontal (x) axis prediction
-    h_predictions, _ = call_yolo_predict("h", img)
+    h_predictions, _ = call_yolo_predict("h", h_img)
     # Print prediction info
-    print_prediction_info(h_predictions, img, 'horizontal')
+    print_prediction_info(h_predictions, h_img, 'horizontal')
 
     #Camera vertical
     # Capture an imamge
-    img, v_mask = init_and_capture_v_cam()
-    # Save image
-    #save_image(img, v_mask)
+    v_img, v_mask = init_and_capture_v_cam()
     # vertical (z) axis prediction
-    v_predictions, v_pmask = call_yolo_predict("v", img, v_mask)
+    v_predictions, v_pmask = call_yolo_predict("v", v_img, v_mask)
     # Print prediction info
-    print_prediction_info(v_predictions, img, 'vertical')
+    print_prediction_info(v_predictions, v_img, 'vertical')
 
     #Get type of seedling
     tos = get_type_of_seedling(h_predictions, v_predictions, v_pmask)
+    # Save h and v images
+    save_image(h_img, v_img, v_mask) 
 
-    return tos #random.randint(1,3)
+    return tos
 
 if __name__ == "__main__":
     run()
