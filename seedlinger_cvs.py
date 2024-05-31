@@ -93,7 +93,7 @@ def get_type_of_seedling(hp, vp, vm):
                 interpolation=cv2.INTER_LINEAR
             )
 
-            h_pred_mask = hp.mask
+            h_pred_mask = hp[0].mask
 
             #load the model if necessary
             if linear == "":
