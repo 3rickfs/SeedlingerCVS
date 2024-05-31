@@ -293,7 +293,12 @@ def proceso_calidad():
     if varaible.flag_calculado and varaible.estado.trabajando:
         print("calculando")
         # TODO: here it comes the seedlinger computer vision system
-        calidad = seedlinger_cvs.run()
+        try:
+            calidad = seedlinger_cvs.run()
+        except Exception as error:
+            calidad = 0
+            print("PROBLEMA IMAGEN, AVISAR ERICK: ",type(error).__name__)
+            
 
         proc_cal.calidad = calidad #random.randint(1, 3)
 
