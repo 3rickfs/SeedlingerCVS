@@ -193,11 +193,11 @@ def save_image(h_img, v_img, mask=None):
         #if mask is None: 
         fn = "v-" + fn
         imgpath = os.getcwd() + "/" + fn
-        cv2.imwrite(imgpath, img)
+        cv2.imwrite(imgpath, v_img)
         #else: #img with mask
         fn = "h-" + fn
         imgpath = os.getcwd() + "/" + fn
-        cv2.imwrite(imgpath, img)
+        cv2.imwrite(imgpath, h_img)
         mn = fn.split(".jpg")[0] + "mask" + ".jpg"
         imgpath = os.getcwd() + "/" + mn
         cv2.imwrite(imgpath, mask)
