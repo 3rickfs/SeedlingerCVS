@@ -12,6 +12,7 @@ from seedling_classifier.seedlingnet.modules.detector import Detector
 
 verbose = False
 h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
+dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
 
 def get_si_bboxs(ifps):
     print("Getting the seedling image bbox list")
