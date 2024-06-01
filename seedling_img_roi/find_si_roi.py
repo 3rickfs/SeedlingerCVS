@@ -1,5 +1,6 @@
 import os
 import cv2
+import sys
 
 SEEDLING_CLASSIFIER_PATH  = '/home/robot/seedlinger/SeedlingerCVS'
 sys.path.append(SEEDLING_CLASSIFIER_PATH)
