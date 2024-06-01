@@ -40,7 +40,7 @@ def get_si_bboxs(ifps):
         pred_mask = np.array([])
         pred_bbox = np.array([])
         if (predictions is None):
-            print('Image Shape:',(img_h.shape), 'does not contains a seedling')
+            print('Image Shape:',(img.shape), 'does not contains a seedling')
         else:
             for pred in predictions:
                 x1, y1, x2, y2 = pred.bbox
