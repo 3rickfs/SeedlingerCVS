@@ -23,17 +23,16 @@ def get_si_bboxs(ifps):
     print("Getting the seedling image bbox list")
 
     bbox_l = []
+    h_detector = Detector(
+        'yolo7',
+        weights=h_wpath,
+        data=dpath,
+        device='cuda:0'
+    )
     for ifp in ifps:
         fp = SEEDLING_CLASSIFIER_PATH + "/imagenes/horizontal/"
         imgfp = fp + ifp
         img = cv2.imread(imgfp, cv2.IMREAD_COLOR)
-
-        h_detector = Detector(
-            'yolo7',
-            weights=h_wpath,
-            data=dpath,
-            device='cuda:0'
-        )
 
         predictions = h_detector.predict(img)
 
