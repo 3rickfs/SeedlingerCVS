@@ -8,7 +8,7 @@ sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedl
 sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedlingnet/modules/detectors/yolov7'))
 
 verbose = True
-h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
+h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
 
 def get_si_bboxs(ifps):
     print("Getting the seedling image bbox list")
