@@ -11,8 +11,10 @@ sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedl
 from seedling_classifier.seedlingnet.modules.detector import Detector
 
 verbose = False
-h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
-dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
+h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
+          'detectors/weights/yolov7-hseed.pt'
+dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
+        'detectors/weights/opt.yaml'
 
 def get_si_bboxs(ifps):
     print("Getting the seedling image bbox list")
