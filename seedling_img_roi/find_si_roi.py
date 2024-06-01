@@ -44,7 +44,6 @@ def get_si_bboxs(ifps):
         else:
             for pred in predictions:
                 x1, y1, x2, y2 = pred.bbox
-                result = detector.model.plot_prediction(img_h, predictions)
                 print('Image Shape:',(img_h.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
                 bbox_l.append(pred.bbox)
 
