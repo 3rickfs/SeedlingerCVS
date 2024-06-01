@@ -8,6 +8,8 @@ sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedl
 sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedlingnet/modules/detectors'))
 sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedlingnet/modules/detectors/yolov7'))
 
+from seedling_classifier.seedlingnet.modules.detector import Detector
+
 verbose = False
 h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
 
