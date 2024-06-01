@@ -2,6 +2,9 @@ import os
 import cv2
 import sys
 
+import numpy as np
+import cv2
+
 SEEDLING_CLASSIFIER_PATH  = '/home/robot/seedlinger/SeedlingerCVS'
 sys.path.append(SEEDLING_CLASSIFIER_PATH)
 sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedlingnet/modules'))
