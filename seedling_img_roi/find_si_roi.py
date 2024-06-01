@@ -8,7 +8,7 @@ sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedl
 sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedlingnet/modules/detectors'))
 sys.path.append(os.path.join(SEEDLING_CLASSIFIER_PATH,'seedling_classifier/seedlingnet/modules/detectors/yolov7'))
 
-verbose = True
+verbose = False
 h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/'
 
 def get_si_bboxs(ifps):
@@ -51,9 +51,9 @@ def run():
         print("printing img file names")
         for f in img_files:
             print(f)
-    
+
     #apply detection
-    sibboxs = get_si_bboxs()
+    sibboxs = get_si_bboxs(img_files)
     print(f"Seedling image bounding box list: {sibboxs}")
 
     return siroi
