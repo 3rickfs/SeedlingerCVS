@@ -4,8 +4,9 @@ import cv2
 def run():
     print("Running the finding seedling image region of interest")
     siroi = ""
-    img_files = [f for f in os.listdir("/home/robot/seedlinger/SeedlingerCVS/imagenes/horizontal") if os.path.isfile(f)]
+    img_files = [f for f in os.listdir("/home/robot/seedlinger/SeedlingerCVS/imagenes/horizontal")] #if os.path.isfile(f)]
 
+    print("printing img file names")
     for f in img_files:
         print(f)
 
