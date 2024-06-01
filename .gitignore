@@ -1,0 +1,8 @@
+seedling-net/
+*.swp
+*.vim
+*.pyc
+*.whl
+vweights
+*.pt
+*.jpg
