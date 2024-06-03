@@ -2,6 +2,7 @@ import os
 import sys
 import warnings
 import random
+import numpy as np
 
 SEEDLING_CLASSIFIER_PATH  = '/home/robot/seedlinger/SeedlingerCVS'
 sys.path.append(SEEDLING_CLASSIFIER_PATH)
@@ -23,7 +24,7 @@ def run():
                         data='seedling_classifier/seedlingnet/modules/detectors/weights/opt.yaml', 
                         device='cuda:0')  # eg: 'yolov7' 'maskrcnn'
     
-    TEST_IMAGE_V = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors/gallery/vertical-rgb.jpg'
+    TEST_IMAGE_V = '/home/robot/seedlinger/SeedlingerCVS/imagenes/vertical/v-2024-06-01_14-26-21.704824_ll_A67_C1.jpg'
     assert os.path.isfile(TEST_IMAGE_V) == True, f'Verificar la existencia del archivo {TEST_IMAGE_V}'
 
     TEST_MASK_V = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/detectors/gallery/vertical-mask.jpg'
@@ -36,21 +37,25 @@ def run():
     img = cv2.imread(TEST_IMAGE_V)
     assert len(img.shape) == 3, f'Verificar que la imagen recibida sea RGB'
 
-    img = cv2.bitwise_and(img,img,mask=mask)
+    #img = cv2.bitwise_and(img,img,mask=mask)
     predictions = detector.predict(img)
     
     if (predictions is None):
+        img = np.zeros(img.shape, dtype = np.uint8)
         print('Image Shape:',(img.shape), 'does not contains a seedling')
-        return -1
+        #cv2.imshow('Vertical Seedling',img)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
+        return img, img
 
     for pred in predictions:
         x1, y1, x2, y2 = pred.bbox
         print('Image Shape:',(img.shape), 'contains a seedling wich Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
     
-    #result = detector.model.plot_prediction(img, predictions)
-    #cv2.imshow('Vertical Seedling',result)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    result = detector.model.plot_prediction(img, predictions)
+    cv2.imshow('Vertical Seedling',result)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     return random.randint(1,3)
  
 

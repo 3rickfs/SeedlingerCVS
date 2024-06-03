@@ -3,6 +3,7 @@ import sys
 import warnings
 import random
 from datetime import datetime
+import numpy as np
 
 import cv2
 import pyzed.sl as sl
@@ -42,7 +43,16 @@ def call_yolo_predict(axis, img, mask=None):
                 data=dpath,
                 device='cuda:0'
             )
-        predictions = h_detector.predict(img)
+        predictions = h_detector.predict(img, threshold=0.4)
+
+        correct_predictions = []
+        for pred in predictions:
+            x1, y1, x2, y2 = pred.bbox
+            if (y1 + y2)/2 > 280: continue
+            correct_predictions.append(pred)
+        
+        predictions = correct_predictions
+
     elif axis == "v":
         print("Getting predictions for vertical poit of view")
         if v_detector == "":
@@ -62,6 +72,9 @@ def call_yolo_predict(axis, img, mask=None):
                     (mask.shape[1], mask.shape[0]),
                     interpolation=cv2.INTER_LINEAR
                 )
+        else:
+            v_pmask = np.zeros(img.shape, dtype = np.uint8)
+
     else:
         raise Exception("Invalid axis inserted")
 

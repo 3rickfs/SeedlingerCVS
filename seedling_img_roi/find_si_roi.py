@@ -34,7 +34,7 @@ def get_si_bboxs(ifps):
         imgfp = fp + ifp
         img = cv2.imread(imgfp, cv2.IMREAD_COLOR)
 
-        predictions = h_detector.predict(img)
+        predictions = h_detector.predict(img, threshold=0.4)
 
         pred_mask = np.array([])
         pred_bbox = np.array([])
@@ -43,9 +43,23 @@ def get_si_bboxs(ifps):
         else:
             for pred in predictions:
                 x1, y1, x2, y2 = pred.bbox
-                print('Image Shape:',(img.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
-                bbox_l.append(pred.bbox)
+            
+                correct_predictions = []
+                for pred in predictions:
+                    x1, y1, x2, y2 = pred.bbox
+                    if (y1 + y2)/2 > 280: continue
 
+                    correct_predictions.append(pred)
+                    print('Image Shape:',(img.shape), 'contains a seedling wich Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
+                
+                #print('Image Shape:',(img.shape), 'contains a seedling at Bounding Box:', (int(x1), int(y1)), (int(x2), int(y2)))
+                bbox_l.append(correct_predictions)
+            #print(len(correct_predictions))
+            #result = h_detector.model.plot_prediction(img, correct_predictions)
+            #cv2.imshow('Vertical Seedling',result)
+            #cv2.waitKey(200)
+        
+        cv2.destroyAllWindows()
     return bbox_l
 
 def run():

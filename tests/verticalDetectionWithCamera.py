@@ -73,10 +73,8 @@ def run(show):
     pred_bbox = {}
     pred_mask = {}
 
-    cv2.imshow('img', img_original)
-    cv2.imshow('depth map',gray)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     if (predictions is None):
         print('Image Shape:',(img.shape), 'does not contains a seedling')
@@ -92,6 +90,8 @@ def run(show):
         pred_mask = cv2.resize(pred.mask*255, (mask_shape[1],mask_shape[0]), interpolation=cv2.INTER_LINEAR)
         print(mask_shape)
 
+        cv2.imshow('img', img_original)
+        cv2.imshow('depth map',gray)
         cv2.imshow('horizontal view',img)
         cv2.imshow('depth map',mask)
         cv2.waitKey(0)

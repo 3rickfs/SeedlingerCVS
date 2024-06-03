@@ -38,7 +38,7 @@ def run(show):
     ret, img_h = cam_h.read()
     #img_h = cv2.rotate(img_h, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-    predictions = detector.predict(img_h)
+    predictions = detector.predict(img_h, threshold=0.5)
 
     pred_mask = np.array([])
     pred_bbox = np.array([])
