@@ -61,6 +61,8 @@ def call_yolo_predict(axis, img, mask=None):
                 correct_predictions.append(pred)
             
             predictions = correct_predictions
+            if len(predictions) == 0:
+                predictions = None
         else:
             predictions = None
 
@@ -156,16 +158,18 @@ def print_prediction_info(predictions, img, top):
 
     cv2.imshow('Image',img)
     cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
+import time
 def init_h_cam():
     global cam_h
     while True:
         try:
-         #Instantiate the camera object      
+         #Instantiate the camera object  
+            time.sleep(0.5)    
             cam_h = cv2.VideoCapture(0)
             #Warming up the camera, sort of
-            for i in range(5):
+            for i in range(2):
                 cam_h.read()
                 # Check if the camera opened successfully
             if not cam_h.isOpened():
@@ -175,7 +179,7 @@ def init_h_cam():
             # Optionally handle the exception in some way, like logging
             print(f"An error occurred: {e}")
 
-    #return cam_h
+    return cam_h
 
 def init_and_capture_v_cam():
     global cam_v
@@ -282,13 +286,14 @@ def save_image_v2(h_img, v_img, mask=None,agujero=0,calidad=0):
 
 
 def run(agujero=0):
-    global cam_h, cam_v
+    global cam_v #am_h,
     #Camara horizontal
-    if cam_h == None:
-        #cam_h = init_h_cam()
-        init_h_cam()
+    #if cam_h == None:
+    cam_h = init_h_cam()
+        #init_h_cam()
     # Capture an image
     ret, h_img = cam_h.read()
+    #cam_h.release()
     print('imagen horizontal:',type(h_img))
     #save_image_h(h_img)
     
