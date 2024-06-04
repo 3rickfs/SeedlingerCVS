@@ -1,11 +1,12 @@
 import os
 import sys
-import warnings
+import time
 import random
+import warnings
 from datetime import datetime
-import numpy as np
 
 import cv2
+import numpy as np
 import pyzed.sl as sl
 
 sys.path.append('seedling_classifier')
@@ -20,8 +21,8 @@ from seedling_classifier.seedlingnet.modules.classifier import Classifier
 global h_detector, v_detector, linear
 h_detector = None
 v_detector = None
-cam_h = None
-cam_v = None
+#cam_h = None
+#cam_v = None
 linear = ""
 h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
         'detectors/weights/yolov7-hseed.pt'
@@ -160,9 +161,9 @@ def print_prediction_info(predictions, img, top):
     cv2.waitKey(0)
     #cv2.destroyAllWindows()
 
-import time
 def init_h_cam():
-    global cam_h
+#    global cam_h
+
     while True:
         try:
          #Instantiate the camera object  
@@ -182,8 +183,9 @@ def init_h_cam():
     return cam_h
 
 def init_and_capture_v_cam():
-    global cam_v
+    #global cam_v
 
+    cam_v = None
     if cam_v == None:
         cam_v = sl.Camera()
 
@@ -286,7 +288,7 @@ def save_image_v2(h_img, v_img, mask=None,agujero=0,calidad=0):
 
 
 def run(agujero=0):
-    global cam_v #am_h,
+    #global cam_v cam_h,
     #Camara horizontal
     #if cam_h == None:
     cam_h = init_h_cam()
