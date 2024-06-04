@@ -159,7 +159,7 @@ def print_prediction_info(predictions, img, top):
 
     cv2.imshow('Image',img)
     cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 
 def init_h_cam():
 #    global cam_h
