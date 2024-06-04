@@ -295,11 +295,13 @@ def proceso_calidad():
         # TODO: here it comes the seedlinger computer vision system
         try:
             calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero+1)
-            #calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero)
             calidad=1
         except Exception as error:
             calidad = 0
-            print("PROBLEMA IMAGEN, AVISAR ERICK: ",type(error).__name__)
+            import sys
+            print("An error occurred:", sys.exc_info()[0])
+
+            print("PROBLEMA IMAGEN, AVISAR ERICK: ",error)
             
 
         proc_cal.calidad = calidad #random.randint(1, 3)

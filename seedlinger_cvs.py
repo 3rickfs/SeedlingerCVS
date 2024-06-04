@@ -18,8 +18,10 @@ from seedling_classifier.seedlingnet.modules.detector import Detector
 from seedling_classifier.seedlingnet.modules.classifier import Classifier
 
 global h_detector, v_detector, linear
-h_detector = ""
-v_detector = ""
+h_detector = None
+v_detector = None
+cam_h = None
+cam_v = None
 linear = ""
 h_wpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/modules/' + \
         'detectors/weights/yolov7-hseed.pt'
@@ -31,12 +33,15 @@ dpath = '/home/robot/seedlinger/SeedlingerCVS/seedling_classifier/seedlingnet/mo
 lmp = '/seedling_classifier/seedlingnet/modules/classifiers/weights/linearModel.pt'
 CLASSIFIER_WEIGHTS = os.getcwd() + lmp
 
+HORIZONTAL_DELIMITER = 240
+
+
 def call_yolo_predict(axis, img, mask=None):
     global h_detector, v_detector
     v_pmask = None
     if axis == "h":
         print("Getting predictions for horizontal poit of view")
-        if h_detector == "":
+        if h_detector == None:
             h_detector = Detector(
                 'yolo7',
                 weights=h_wpath,
@@ -45,17 +50,23 @@ def call_yolo_predict(axis, img, mask=None):
             )
         predictions = h_detector.predict(img, threshold=0.4)
 
-        correct_predictions = []
-        for pred in predictions:
-            x1, y1, x2, y2 = pred.bbox
-            if (y1 + y2)/2 > 280: continue
-            correct_predictions.append(pred)
-        
-        predictions = correct_predictions
+        if predictions is not None:
+            
+            correct_predictions = []
+            for pred in predictions:
+                x1, y1, x2, y2 = pred.bbox
+                #if y1<y2: y2 = y1
+                if (y1) > 230: continue
+                if (y2) > 315: continue
+                correct_predictions.append(pred)
+            
+            predictions = correct_predictions
+        else:
+            predictions = None
 
     elif axis == "v":
         print("Getting predictions for vertical poit of view")
-        if v_detector == "":
+        if v_detector == None:
             v_detector = Detector(
                 'yolo7',
                 weights=v_wpath,
@@ -126,9 +137,12 @@ def get_type_of_seedling(hp, vp, vm):
     return tos
 
 def print_prediction_info(predictions, img, top):
+    cv2.line(img, (10, HORIZONTAL_DELIMITER), (100, HORIZONTAL_DELIMITER), (0, 255, 0), thickness=2)
+
     if predictions is None:
         print(f"Point of view: {top}")
         print('Image Shape:',(img.shape), 'does not contains a seedling')
+
     else:
         for pred in predictions:
             x1, y1, x2, y2 = pred.bbox
@@ -136,50 +150,69 @@ def print_prediction_info(predictions, img, top):
             print('contains a seedling with bounding box:')
             print(f'{int(x1)}, {int(y1)}, {int(x2)}, {int(y2)}')
 
-def init_h_cam():
-    #Instantiate the camera object
-    cam_h = cv2.VideoCapture(0)
-    #Warming up the camera, sort of
-    for i in range(5):
-        cam_h.read()
-    # Check if the camera opened successfully
-    if not cam_h.isOpened():
-        raise Exception("Error: Unable to open X-axis camera.")
+            x, y, w, h = pred.bbox
+            cv2.rectangle(img, (int(x), int(y)), (int(w), int(h)), (0,255,0), 2)
 
-    return cam_h
+
+    cv2.imshow('Image',img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def init_h_cam():
+    global cam_h
+    while True:
+        try:
+         #Instantiate the camera object      
+            cam_h = cv2.VideoCapture(0)
+            #Warming up the camera, sort of
+            for i in range(5):
+                cam_h.read()
+                # Check if the camera opened successfully
+            if not cam_h.isOpened():
+                raise Exception("Error: Unable to open X-axis camera.") 
+            break
+        except Exception as e:
+            # Optionally handle the exception in some way, like logging
+            print(f"An error occurred: {e}")
+
+    #return cam_h
 
 def init_and_capture_v_cam():
-    camera = sl.Camera()
+    global cam_v
 
-    init_params = sl.InitParameters()
-    init_params.camera_resolution = sl.RESOLUTION.HD1080
-    init_params.camera_fps = 30
-    init_params.depth_mode = sl.DEPTH_MODE.NEURAL
-    init_params.coordinate_units = sl.UNIT.METER
-    init_params.depth_minimum_distance = 0.4
-    init_params.depth_maximum_distance = 0.8
-    init_params.camera_image_flip = sl.FLIP_MODE.AUTO
-    init_params.depth_stabilization = 1 
-    runtime_params = sl.RuntimeParameters(
-        confidence_threshold=50,
-        enable_fill_mode=True,
-        texture_confidence_threshold=200
-    )
+    if cam_v == None:
+        cam_v = sl.Camera()
 
-    err = camera.open(init_params)
-    if err != sl.ERROR_CODE.SUCCESS:
-        print(err)
-        sys.exit()
+        init_params = sl.InitParameters()
+        init_params.camera_resolution = sl.RESOLUTION.HD1080
+        init_params.camera_fps = 30
+        init_params.depth_mode = sl.DEPTH_MODE.NEURAL
+        init_params.coordinate_units = sl.UNIT.METER
+        init_params.depth_minimum_distance = 0.4
+        init_params.depth_maximum_distance = 0.8
+        init_params.camera_image_flip = sl.FLIP_MODE.AUTO
+        init_params.depth_stabilization = 1 
+        runtime_params = sl.RuntimeParameters(
+            confidence_threshold=50,
+            enable_fill_mode=True,
+            texture_confidence_threshold=200
+        )
+
+        err = cam_v.open(init_params)
+        if err != sl.ERROR_CODE.SUCCESS:
+            print(err)
+            sys.exit()
+        
+        assert cam_v.grab(runtime_params) == sl.ERROR_CODE.SUCCESS, \
+        'La cámara Zed no esta ejecutandose correctamente,' + \
+        'verificar su conexion'
 
     depth_map = sl.Mat()
     image = sl.Mat()
 
-    assert camera.grab(runtime_params) == sl.ERROR_CODE.SUCCESS, \
-            'La cámara Zed no esta ejecutandose correctamente,' + \
-            'verificar su conexion'
 
     threshold_value = 130
-    camera.retrieve_image(depth_map, sl.VIEW.DEPTH)
+    cam_v.retrieve_image(depth_map, sl.VIEW.DEPTH)
     numpy_depth_map = depth_map.get_data()
     gray = cv2.cvtColor(numpy_depth_map[:,:,0:3], cv2.COLOR_BGR2GRAY)
     gray = gray[290:890, 670:1550]
@@ -187,7 +220,7 @@ def init_and_capture_v_cam():
     assert len(mask.shape) == 2, 'Verificar que se reciba una mascara' + \
                                  f'se recibe {mask.shape}'
 
-    camera.retrieve_image(image, sl.VIEW.LEFT)
+    cam_v.retrieve_image(image, sl.VIEW.LEFT)
     numpy_image = image.get_data()
     img = numpy_image[:,:,0:3]
     img = img[290:890, 670:1550,:]
@@ -249,25 +282,37 @@ def save_image_v2(h_img, v_img, mask=None,agujero=0,calidad=0):
 
 
 def run(agujero=0):
+    global cam_h, cam_v
     #Camara horizontal
-    cam_h = init_h_cam()
+    if cam_h == None:
+        #cam_h = init_h_cam()
+        init_h_cam()
     # Capture an image
     ret, h_img = cam_h.read()
+    print('imagen horizontal:',type(h_img))
     #save_image_h(h_img)
     
     # horizontal (x) axis prediction
     h_predictions, _ = call_yolo_predict("h", h_img)
+    print('predicción horizontal', type(h_predictions))
+    print(h_predictions[0].bbox) if not(h_predictions is None) else None
+    print(h_predictions[0].mask) if not(h_predictions is None) else None
     # Print prediction info
     print_prediction_info(h_predictions, h_img, 'horizontal')
 
     #Camera vertical
     # Capture an imamge
     v_img, v_mask = init_and_capture_v_cam()
+    print('imagen vertical:',type(v_img))
     #save_image_v(v_img)
     #save_image_MASK(v_mask)
 
     # vertical (z) axis prediction
     v_predictions, v_pmask = call_yolo_predict("v", v_img, v_mask)
+    print('predicción vertical', type(v_predictions))
+    print(v_predictions[0].bbox) if not(v_predictions is None) else None 
+    print(v_predictions[0].mask) if not(h_predictions is None) else None
+    
     # Print prediction info
     print_prediction_info(v_predictions, v_img, 'vertical')
 

@@ -15,7 +15,7 @@
 #         self.model = None
 
 #         if detector_name is None:
-#             warnings.warn('detector_name is a NoneType object')
+#             warnings.warn('detector_name is a  object')
 #             return
 
 #         elif detector_name == 'yolo7':
