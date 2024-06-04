@@ -95,7 +95,7 @@ def call_yolo_predict(axis, img, mask=None):
 def get_type_of_seedling(hp, vp, vm):
     global linear
     tos = 0
-    if hp is None or vp is None:
+    if hp is None or vp is None or hp == [] or vp == []:
         tos = 1
         print("*"*100)
         print("NOT SEEDLING DETECTED")
@@ -139,7 +139,7 @@ def get_type_of_seedling(hp, vp, vm):
 def print_prediction_info(predictions, img, top):
     cv2.line(img, (10, HORIZONTAL_DELIMITER), (100, HORIZONTAL_DELIMITER), (0, 255, 0), thickness=2)
 
-    if predictions is None:
+    if predictions is None or predictions == []:
         print(f"Point of view: {top}")
         print('Image Shape:',(img.shape), 'does not contains a seedling')
 
