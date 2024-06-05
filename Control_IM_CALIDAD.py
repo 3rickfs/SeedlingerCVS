@@ -287,6 +287,16 @@ def update_bandeja_id():
     else:
         varaible.flag_actualizar=False
 
+def contador_calidad(calidad):
+    if calidad==0:
+        proc_cal.cuenta_c0+=1
+    elif calidad==1:
+        proc_cal.cuenta_c1+=1
+    elif calidad==2:
+        proc_cal.cuenta_c2+=1
+    elif calidad==3:
+        proc_cal.cuenta_c3+=1
+
 def proceso_calidad():
     if varaible.estado.terminado and not varaible.control.iniciar_calidad:
         varaible.estado.set_libre()
@@ -298,24 +308,17 @@ def proceso_calidad():
         print("calculando")
         # TODO: here it comes the seedlinger computer vision system
         try:
-            calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero+1)
-            #calidad=1
+            calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero+1) 
         except Exception as error:
             calidad = 0
             import sys
-            print("An error occurred:", sys.exc_info()[0])
+            print("IMAGEN An error occurred:", sys.exc_info()[0])
 
             print("PROBLEMA IMAGEN, AVISAR ERICK: ",error)
             
-        if calidad==0:
-            proc_cal.cuenta_c0+=1
-        elif calidad==1:
-            proc_cal.cuenta_c1+=1
-        elif calidad==2:
-            proc_cal.cuenta_c2+=1
-        elif calidad==3:
-            proc_cal.cuenta_c3+=1
+        contador_calidad(calidad)
 
+        #calidad=3
 
         proc_cal.calidad = calidad #random.randint(1, 3)
 
@@ -334,6 +337,7 @@ def proceso_calidad():
         proc_cal.t_0_1=time.time()
         time_Delta=proc_cal.t_0_1 - proc_cal.t_0_0
         print("/"*80)
+        print("Agujero:{}".format(Variable_HR.ind_agujero+1))
         print("time total:{:0.3f}".format(time_Delta))
         print("Cuenta:")
         print(f"C0={proc_cal.cuenta_c0}\tC1={proc_cal.cuenta_c1}\tC2={proc_cal.cuenta_c2}\tC3={proc_cal.cuenta_c3}")
@@ -414,7 +418,7 @@ def main(list_ir:ListProxy,list_hr:ListProxy,debug=False):
                 print(f"Data control IR:{list_ir[0]}")
                 print(f"Data control HR:{data_hr}")
 
-            time.sleep(0.01)
+            time.sleep(0.02)
             if debug:
                 print(LINE_UP_1,end=LINE_CLEAR)
                 print(LINE_UP_1,end=LINE_CLEAR)

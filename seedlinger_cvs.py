@@ -35,7 +35,7 @@ lmp = '/seedling_classifier/seedlingnet/modules/classifiers/weights/linearModel.
 CLASSIFIER_WEIGHTS = os.getcwd() + lmp
 
 HORIZONTAL_DELIMITER = 240
-
+VERTICAL_DELIMITER = 330
 
 def call_yolo_predict(axis, img, mask=None):
     global h_detector, v_detector
@@ -77,12 +77,10 @@ def call_yolo_predict(axis, img, mask=None):
                 device='cuda:0'
             )
         predictions = v_detector.predict(img)
-        if not len(predictions):
-            predictions = None
+        #if not len(predictions):
+        #    predictions = None
         if predictions is not None:
             #there is v predictions
-            #if len(predictions) == 0:
-            #    predictions = None
 
             pl = len(predictions)
             if pl == 1:
@@ -91,6 +89,10 @@ def call_yolo_predict(axis, img, mask=None):
                     (mask.shape[1], mask.shape[0]),
                     interpolation=cv2.INTER_LINEAR
                 )
+            
+            if pl == 0:
+                predictions = None
+
         else:
             v_pmask = np.zeros(img.shape, dtype = np.uint8)
 
@@ -146,7 +148,8 @@ def get_type_of_seedling(hp, vp, vm):
     return tos
 
 def print_prediction_info(predictions, img, top):
-    cv2.line(img, (10, HORIZONTAL_DELIMITER), (100, HORIZONTAL_DELIMITER), (0, 255, 0), thickness=2)
+    cv2.line(img, (10, HORIZONTAL_DELIMITER), (300, HORIZONTAL_DELIMITER), (0, 255, 0), thickness=2)
+    cv2.line(img, (10, VERTICAL_DELIMITER), (300, VERTICAL_DELIMITER), (0, 255, 0), thickness=2)
 
     if predictions is None or predictions == []:
         print(f"Point of view: {top}")
@@ -268,6 +271,27 @@ def save_image(h_img, v_img, mask=None,agujero=0,calidad=0):
 
     return True
 
+def save_image_proc(h_img, v_img,agujero=0,calidad=0):
+    try:
+        cdt = str(datetime.now())
+        fn = cdt.replace(" ", "_")
+        fn = fn.replace(":", "-")
+        fn += "_ll_"
+        fn= fn + "A" + str(agujero) + "_C" + str(calidad)  +".jpg"
+
+        #if mask is None: 
+        fn1 = "v-"+ fn
+        imgpath = os.getcwd() + "/imagenes/procesadas/vertical/" + fn1
+        cv2.imwrite(imgpath, v_img)
+        #else: #img with mask
+        fn2 = "h-" + fn
+        imgpath = os.getcwd() + "/imagenes/procesadas/horizontal/" + fn2
+        cv2.imwrite(imgpath, h_img)
+    except Exception as e:
+        print(f"ERROR found when saving the image: {e}")
+
+    return True
+
 
 def run(agujero=0):
     #global cam_v cam_h,
@@ -277,7 +301,7 @@ def run(agujero=0):
         #init_h_cam()
     # Capture an image
     ret, h_img = cam_h.read()
-    s_h_img = h_img #para asegurar que la imagen guardada no tenga recuadros
+    s_h_img = h_img.copy() #para asegurar que la imagen guardada no tenga recuadros
     #cam_h.release()
     print('imagen horizontal:',type(h_img))
     #save_image_h(h_img)
@@ -293,7 +317,7 @@ def run(agujero=0):
     #Camera vertical
     # Capture an imamge
     v_img, v_mask = init_and_capture_v_cam()
-    s_v_img = v_img #para asegurar que la imagen guardada no tenga recuadros
+    s_v_img = v_img.copy() #para asegurar que la imagen guardada no tenga recuadros
     print('imagen vertical:',type(v_img))
     #save_image_v(v_img)
     #save_image_MASK(v_mask)
@@ -302,7 +326,7 @@ def run(agujero=0):
     v_predictions, v_pmask = call_yolo_predict("v", v_img, v_mask)
     print('predicción vertical', type(v_predictions))
     print(v_predictions[0].bbox) if not(v_predictions is None) else None 
-    print(v_predictions[0].mask) if not(h_predictions is None) else None
+    print(v_predictions[0].mask) if not(v_predictions is None) else None
     
     # Print prediction info
     print_prediction_info(v_predictions, v_img, 'vertical')
@@ -310,6 +334,7 @@ def run(agujero=0):
     #Get type of seedling
     tos = get_type_of_seedling(h_predictions, v_predictions, v_pmask)
     # Save h and v images
+    save_image_proc(h_img, v_img, agujero, tos)
     save_image(s_h_img, s_v_img, v_mask, agujero, tos) 
 
     return tos

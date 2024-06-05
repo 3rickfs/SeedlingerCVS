@@ -97,7 +97,7 @@ async def updating_task_PROCESS(arg:modbus_server_config,debug=False):
                 #print('Modbus Time Ciclo: {}'.format(time_taken2.microseconds),end=LINE_RETURN)
                 #print('\033[30C Time Pros: {}'.format(time_taken.microseconds))
             
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.02)
             #end2 = datetime.now()
             if(debug):
                 print(LINE_UP_1,end=LINE_CLEAR)
