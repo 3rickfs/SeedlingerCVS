@@ -35,6 +35,11 @@ class SIM_calidad:
 
             self.has_data:bool=False
 
+            self.cuenta_c0:int=0
+            self.cuenta_c1:int=0
+            self.cuenta_c2:int=0
+            self.cuenta_c3:int=0
+
 class Variables_Control:
     class Status:
         def __init__(self) -> None:
@@ -302,6 +307,15 @@ def proceso_calidad():
 
             print("PROBLEMA IMAGEN, AVISAR ERICK: ",error)
             
+        if calidad==0:
+            proc_cal.cuenta_c0+=1
+        elif calidad==1:
+            proc_cal.cuenta_c1+=1
+        elif calidad==2:
+            proc_cal.cuenta_c2+=1
+        elif calidad==3:
+            proc_cal.cuenta_c3+=1
+
 
         proc_cal.calidad = calidad #random.randint(1, 3)
 
@@ -320,7 +334,9 @@ def proceso_calidad():
         proc_cal.t_0_1=time.time()
         time_Delta=proc_cal.t_0_1 - proc_cal.t_0_0
         print("/"*80)
-        print(f"time total:{time_Delta}, init:{proc_cal.t_0_0}")
+        print("time total:{:0.3f}".format(time_Delta))
+        print("Cuenta:")
+        print(f"C0={proc_cal.cuenta_c0}\tC1={proc_cal.cuenta_c1}\tC2={proc_cal.cuenta_c2}\tC3={proc_cal.cuenta_c3}")
         print("/"*80)
         #if time_Delta.seconds>=1 and varaible.estado.trabajando:
         if varaible.estado.trabajando:
