@@ -244,31 +244,7 @@ def init_and_capture_v_cam():
 
     return img, mask
 
-def save_image(h_img, v_img, mask=None):
-    try:
-        cdt = str(datetime.now())
-        fn = cdt.replace(" ", "_")
-        fn = fn.replace(":", "-")
-        fn += ".jpg"
-        fn2= fn
-        #if mask is None: 
-        fn1 = "v-" + fn
-        imgpath = os.getcwd() + "/imagenes/vertical/" + fn1
-        cv2.imwrite(imgpath, v_img)
-        #else: #img with mask
-        fn2 = "h-" + fn
-        imgpath = os.getcwd() + "/imagenes/horizontal/" + fn2
-        cv2.imwrite(imgpath, h_img)
-        fnv= "v-mask-" + fn
-        mn = fn.split(".jpg")[0] + "mask" + ".jpg"
-        imgpath = os.getcwd() + "/imagenes/vertical/mask/" + fnv
-        cv2.imwrite(imgpath, mask)
-    except Exception as e:
-        print(f"ERROR found when saving the image: {e}")
-
-    return True
-
-def save_image_v2(h_img, v_img, mask=None,agujero=0,calidad=0):
+def save_image(h_img, v_img, mask=None,agujero=0,calidad=0):
     try:
         cdt = str(datetime.now())
         fn = cdt.replace(" ", "_")
@@ -284,8 +260,8 @@ def save_image_v2(h_img, v_img, mask=None,agujero=0,calidad=0):
         fn2 = "h-" + fn
         imgpath = os.getcwd() + "/imagenes/horizontal/" + fn2
         cv2.imwrite(imgpath, h_img)
-        fnv= "v-mask-" + fn
-        imgpath = os.getcwd() + "/imagenes/mask/" + fnv
+        fn3= "v-mask-" + fn
+        imgpath = os.getcwd() + "/imagenes/mask/" + fn3
         cv2.imwrite(imgpath, mask)
     except Exception as e:
         print(f"ERROR found when saving the image: {e}")
@@ -301,6 +277,7 @@ def run(agujero=0):
         #init_h_cam()
     # Capture an image
     ret, h_img = cam_h.read()
+    s_h_img = h_img #para asegurar que la imagen guardada no tenga recuadros
     #cam_h.release()
     print('imagen horizontal:',type(h_img))
     #save_image_h(h_img)
@@ -316,6 +293,7 @@ def run(agujero=0):
     #Camera vertical
     # Capture an imamge
     v_img, v_mask = init_and_capture_v_cam()
+    s_v_img = v_img #para asegurar que la imagen guardada no tenga recuadros
     print('imagen vertical:',type(v_img))
     #save_image_v(v_img)
     #save_image_MASK(v_mask)
@@ -332,7 +310,7 @@ def run(agujero=0):
     #Get type of seedling
     tos = get_type_of_seedling(h_predictions, v_predictions, v_pmask)
     # Save h and v images
-    save_image_v2(h_img, v_img, v_mask, agujero, tos) 
+    save_image(s_h_img, s_v_img, v_mask, agujero, tos) 
 
     return tos
 
