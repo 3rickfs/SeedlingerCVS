@@ -52,7 +52,7 @@ def call_yolo_predict(axis, img, mask=None):
         predictions = h_detector.predict(img, threshold=0.4)
 
         if predictions is not None:
-            
+
             correct_predictions = []
             for pred in predictions:
                 x1, y1, x2, y2 = pred.bbox
@@ -60,7 +60,7 @@ def call_yolo_predict(axis, img, mask=None):
                 if (y1) > 230: continue
                 if (y2) > 315: continue
                 correct_predictions.append(pred)
-            
+
             predictions = correct_predictions
             if len(predictions) == 0:
                 predictions = None
@@ -77,10 +77,12 @@ def call_yolo_predict(axis, img, mask=None):
                 device='cuda:0'
             )
         predictions = v_detector.predict(img)
+        if not len(predictions):
+            predictions = None
         if predictions is not None:
             #there is v predictions
-            if len(predictions) == 0:
-                predictions = None
+            #if len(predictions) == 0:
+            #    predictions = None
 
             pl = len(predictions)
             if pl == 1:
@@ -100,6 +102,7 @@ def call_yolo_predict(axis, img, mask=None):
 
 def get_type_of_seedling(hp, vp, vm):
     global linear
+
     tos = 0
     if hp is None or vp is None or hp == [] or vp == []:
         tos = 1
