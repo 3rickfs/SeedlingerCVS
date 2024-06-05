@@ -288,14 +288,13 @@ def proceso_calidad():
         varaible.flag_procesando=False
         varaible.flag_calculado=False
 
-    
         
     if varaible.flag_calculado and varaible.estado.trabajando:
         print("calculando")
         # TODO: here it comes the seedlinger computer vision system
         try:
             calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero+1)
-            calidad=1
+            #calidad=1
         except Exception as error:
             calidad = 0
             import sys
@@ -315,6 +314,19 @@ def proceso_calidad():
         proc_cal.agujero=Variable_HR.ind_agujero
         varaible.flag_calculado=False
         proc_cal.has_data=True
+
+    if varaible.flag_procesando:
+        #proc_cal.t_0_1=datetime.now()
+        proc_cal.t_0_1=time.time()
+        time_Delta=proc_cal.t_0_1 - proc_cal.t_0_0
+        print("/"*80)
+        print(f"time total:{time_Delta}, init:{proc_cal.t_0_0}")
+        print("/"*80)
+        #if time_Delta.seconds>=1 and varaible.estado.trabajando:
+        if varaible.estado.trabajando:
+            #print(f"termino ya: {time_Delta.microseconds}")
+            varaible.estado.set_terminado()
+            varaible.flag_procesando=False
     
     if varaible.control.iniciar_calidad and not varaible.control.reset and varaible.estado.libre:
         print ("inicio")
@@ -325,17 +337,7 @@ def proceso_calidad():
         #proc_cal.t_0_0=datetime.now()
         proc_cal.t_0_0=time.time()
     
-    if varaible.flag_procesando:
-        #proc_cal.t_0_1=datetime.now()
-        proc_cal.t_0_1=time.time()
-        time_Delta=proc_cal.t_0_1 - proc_cal.t_0_0
-        print(f"time total:{time_Delta}, init:{proc_cal.t_0_0}")
-
-        #if time_Delta.seconds>=1 and varaible.estado.trabajando:
-        if time_Delta>=1.0 and varaible.estado.trabajando:
-            #print(f"termino ya: {time_Delta.microseconds}")
-            varaible.estado.set_terminado()
-            varaible.flag_procesando=False
+    
         
 def reset_estado():
     if varaible.control.reset:

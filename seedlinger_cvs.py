@@ -79,6 +79,9 @@ def call_yolo_predict(axis, img, mask=None):
         predictions = v_detector.predict(img)
         if predictions is not None:
             #there is v predictions
+            if len(predictions) == 0:
+                predictions = None
+
             pl = len(predictions)
             if pl == 1:
                 v_pmask = cv2.resize(
@@ -158,8 +161,8 @@ def print_prediction_info(predictions, img, top):
 
 
     cv2.imshow('Image',img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    cv2.waitKey(100)
+    #cv2.destroyAllWindows()
 
 def init_h_cam():
 #    global cam_h
@@ -170,7 +173,7 @@ def init_h_cam():
             time.sleep(0.5)    
             cam_h = cv2.VideoCapture(0)
             #Warming up the camera, sort of
-            for i in range(2):
+            for i in range(5):
                 cam_h.read()
                 # Check if the camera opened successfully
             if not cam_h.isOpened():

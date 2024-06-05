@@ -1,0 +1,11 @@
+Script started on 2024-06-04 18:19:31-05:00 [TERM="xterm-256color" TTY="/dev/pts/12" COLUMNS="88" LINES="42"]
+camera_manager	       pyzed-4.1-cp310-cp310-linux_x86_64.whl  servidor_modbus_mp.py
+CHANGELOG.md	       README.md			       session.txt
+Control_IM_CALIDAD.py  requirements.txt			       Session.vim
+imagenes	       seedling_classifier		       src
+Modbus_control	       seedlinger_cvs.py		       tests
+output.txt	       seedling_img_roi			       test_seedlinger_cvs.py
+Parametros	       server_calidad.sh		       TODO.md
+__pycache__	       server_im_calidad.py		       weights
+
+Script done on 2024-06-04 18:19:31-05:00 [COMMAND_EXIT_CODE="0"]
