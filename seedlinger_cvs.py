@@ -37,6 +37,143 @@ CLASSIFIER_WEIGHTS = os.getcwd() + lmp
 HORIZONTAL_DELIMITER = 240
 VERTICAL_DELIMITER = 330
 
+class calidad:
+    def __init__(self) -> None:
+        self.cam_h=cv2.VideoCapture(0)
+        self.cam_h_ok=False
+
+        self.init_horizontal()
+
+        self.cam_v=sl.Camera()
+        self.cam_v_ok=False
+        self.init_vertical()
+    
+    def init_horizontal(self):
+        while True:
+            try:
+            #Instantiate the camera object  
+                time.sleep(0.5)    
+                #Warming up the camera, sort of
+                for i in range(5):
+                    self.cam_h.read()
+                    # Check if the camera opened successfully
+                if not self.cam_h.isOpened():
+                    raise Exception("Error: Unable to open X-axis camera.") 
+                break
+            except Exception as e:
+                # Optionally handle the exception in some way, like logging
+                print(f"An error occurred: {e}")
+        self.cam_h_ok=True
+        
+    def imagen_h(self):
+        for i in range(5):
+            ret, frame = self.cam_h.read()
+        return frame
+
+    def init_vertical(self):
+        init_params = sl.InitParameters()
+        init_params.camera_resolution = sl.RESOLUTION.HD1080
+        init_params.camera_fps = 30
+        init_params.depth_mode = sl.DEPTH_MODE.NEURAL
+        init_params.coordinate_units = sl.UNIT.METER
+        init_params.depth_minimum_distance = 0.4
+        init_params.depth_maximum_distance = 0.8
+        init_params.camera_image_flip = sl.FLIP_MODE.AUTO
+        init_params.depth_stabilization = 1 
+        self.runtime_params = sl.RuntimeParameters(
+            confidence_threshold=50,
+            enable_fill_mode=True,
+            texture_confidence_threshold=200
+        )
+
+        err = self.cam_v.open(init_params)
+        if err != sl.ERROR_CODE.SUCCESS:
+            print(err)
+            sys.exit()
+        
+        assert self.cam_v.grab(self.runtime_params) == sl.ERROR_CODE.SUCCESS, \
+        'La cámara Zed no esta ejecutandose correctamente,' + \
+        'verificar su conexion'
+        self.cam_v_ok=True
+
+    def v_cam_capture(self):
+        depth_map = sl.Mat()
+        image = sl.Mat()
+
+        assert self.cam_v.grab(self.runtime_params) == sl.ERROR_CODE.SUCCESS, \
+        'La cámara Zed no esta ejecutandose correctamente,' + \
+        'verificar su conexion'
+    
+        self.cam_v.retrieve_image(depth_map, sl.VIEW.DEPTH)
+        self.cam_v.retrieve_image(image, sl.VIEW.LEFT)
+
+        threshold_value = 130
+        
+        numpy_depth_map = depth_map.get_data()
+        gray = cv2.cvtColor(numpy_depth_map[:,:,0:3], cv2.COLOR_BGR2GRAY)
+        gray = gray[290:890, 670:1550]
+        _, mask = cv2.threshold(gray, threshold_value, 255, cv2.THRESH_BINARY)
+        assert len(mask.shape) == 2, 'Verificar que se reciba una mascara' + \
+                                    f'se recibe {mask.shape}'
+
+        numpy_image = image.get_data()
+        img = numpy_image[:,:,0:3]
+        img = img[290:890, 670:1550,:]
+
+        assert len(img.shape) == 3, 'Verificar que se reciba una imagen RGB' + \
+                                    f', se recibe {img.shape}'
+
+        img = cv2.bitwise_and(img,img,mask=mask)
+
+        return img, mask
+
+    def run(self,agujero=0):
+        #Camara horizontal
+        # Capture an image
+
+        h_img=self.imagen_h()
+        s_h_img = h_img.copy() #para asegurar que la imagen guardada no tenga recuadros
+        #cam_h.release()
+        print('imagen horizontal:',type(h_img))
+        #save_image_h(h_img)
+        
+        # horizontal (x) axis prediction
+        h_predictions, _ = call_yolo_predict("h", h_img)
+        print('predicción horizontal', type(h_predictions))
+        print(h_predictions[0].bbox) if not(h_predictions is None) else None
+        print(h_predictions[0].mask) if not(h_predictions is None) else None
+        # Print prediction info
+        print_prediction_info(h_predictions, h_img, 'horizontal')
+
+        #Camera vertical
+        # Capture an imamge
+        #v_img, v_mask = init_and_capture_v_cam()
+        v_img, v_mask =self.v_cam_capture()
+        s_v_img = v_img.copy() #para asegurar que la imagen guardada no tenga recuadros
+        print('imagen vertical:',type(v_img))
+        #save_image_v(v_img)
+        #save_image_MASK(v_mask)
+
+        # vertical (z) axis prediction
+        v_predictions, v_pmask = call_yolo_predict("v", v_img, v_mask)
+        print('predicción vertical', type(v_predictions))
+        print(v_predictions[0].bbox) if not(v_predictions is None) else None 
+        print(v_predictions[0].mask) if not(v_predictions is None) else None
+        
+        # Print prediction info
+        print_prediction_info(v_predictions, v_img, 'vertical')
+        
+        print_prediction_info(v_predictions, v_mask, 'mask')
+
+        #Get type of seedling
+        tos = get_type_of_seedling(h_predictions, v_predictions, v_pmask)
+        # Save h and v images
+        save_image_proc(h_img, v_img, agujero, tos)
+        save_image(s_h_img, s_v_img, v_mask, agujero, tos) 
+
+        return tos
+
+
 def call_yolo_predict(axis, img, mask=None):
     global h_detector, v_detector
     v_pmask = None
@@ -165,14 +302,13 @@ def print_prediction_info(predictions, img, top):
             x, y, w, h = pred.bbox
             cv2.rectangle(img, (int(x), int(y)), (int(w), int(h)), (0,255,0), 2)
 
-
-    cv2.imshow('Image',img)
+    img_s=ResizeWithAspectRatio(img,width=480)
+    cv2.imshow("Image_{}".format(top),img_s)
     cv2.waitKey(100)
     #cv2.destroyAllWindows()
 
 def init_h_cam():
 #    global cam_h
-
     while True:
         try:
          #Instantiate the camera object  
@@ -292,6 +428,21 @@ def save_image_proc(h_img, v_img,agujero=0,calidad=0):
 
     return True
 
+def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
+    dim = None
+    h, w, channels = image.shape
+    #print("h:{}, w:{}".format(h,w))
+
+    if width is None and height is None:
+        return image
+    if width is None:
+        r = height / float(h)
+        dim = (int(w * r), height)
+    else:
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+    return cv2.resize(image, dim, interpolation=inter)
 
 def run(agujero=0):
     #global cam_v cam_h,
@@ -338,6 +489,8 @@ def run(agujero=0):
     save_image(s_h_img, s_v_img, v_mask, agujero, tos) 
 
     return tos
+
+
 
 if __name__ == "__main__":
     run()

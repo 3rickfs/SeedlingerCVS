@@ -23,22 +23,22 @@ LINE_FORMWARE='\033[20C'
 
 class SIM_calidad:
     def __init__(self) -> None:
-            self.agujero:int=99
-            self.calidad:int=0
-            self.altura:float=0
-            self.angulo:float=0
+        self.agujero:int=99
+        self.calidad:int=0
+        self.altura:float=0
+        self.angulo:float=0
 
-            #self.t_0_0:datetime
-            #self.t_0_1:datetime
-            self.t_0_0:float=0.0
-            self.t_0_1:float=0.0
+        #self.t_0_0:datetime
+        #self.t_0_1:datetime
+        self.t_0_0:float=0.0
+        self.t_0_1:float=0.0
 
-            self.has_data:bool=False
+        self.has_data:bool=False
 
-            self.cuenta_c0:int=0
-            self.cuenta_c1:int=0
-            self.cuenta_c2:int=0
-            self.cuenta_c3:int=0
+        self.cuenta_c0:int=0
+        self.cuenta_c1:int=0
+        self.cuenta_c2:int=0
+        self.cuenta_c3:int=0
 
 class Variables_Control:
     class Status:
@@ -297,7 +297,7 @@ def contador_calidad(calidad):
     elif calidad==3:
         proc_cal.cuenta_c3+=1
 
-def proceso_calidad():
+def proceso_calidad(vision:seedlinger_cvs.calidad):
     if varaible.estado.terminado and not varaible.control.iniciar_calidad:
         varaible.estado.set_libre()
         varaible.flag_procesando=False
@@ -308,7 +308,8 @@ def proceso_calidad():
         print("calculando")
         # TODO: here it comes the seedlinger computer vision system
         try:
-            calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero+1) 
+            #calidad = seedlinger_cvs.run(agujero=Variable_HR.ind_agujero+1) 
+            calidad = vision.run(agujero=Variable_HR.ind_agujero+1)
         except Exception as error:
             calidad = 0
             import sys
@@ -369,6 +370,8 @@ def main(list_ir:ListProxy,list_hr:ListProxy,debug=False):
 
     Variable_HR.update_variables2(data_cero)
     varaible.estado.set_libre()
+
+    vision=seedlinger_cvs.calidad()
     
     #list_ir=Variable_IR.update_list_data()
 
@@ -388,7 +391,7 @@ def main(list_ir:ListProxy,list_hr:ListProxy,debug=False):
 
             update_bandeja_id()
 
-            proceso_calidad()
+            proceso_calidad(vision)
 
 
             reset_estado()           
