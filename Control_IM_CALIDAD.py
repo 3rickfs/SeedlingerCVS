@@ -7,6 +7,7 @@ import json
 
 from src.entorno_MODBUS import Config_server_db_brazos
 import seedlinger_cvs 
+import seedlinger_cvs_vp
 
 entorno=Config_server_db_brazos()
 Variable_IR=entorno.Brazo1.Registro_input
@@ -297,7 +298,7 @@ def contador_calidad(calidad):
     elif calidad==3:
         proc_cal.cuenta_c3+=1
 
-def proceso_calidad(vision:seedlinger_cvs.calidad):
+def proceso_calidad(vision:seedlinger_cvs_vp.calidad):
     if varaible.estado.terminado and not varaible.control.iniciar_calidad:
         varaible.estado.set_libre()
         varaible.flag_procesando=False
@@ -371,7 +372,7 @@ def main(list_ir:ListProxy,list_hr:ListProxy,debug=False):
     Variable_HR.update_variables2(data_cero)
     varaible.estado.set_libre()
 
-    vision=seedlinger_cvs.calidad()
+    vision=seedlinger_cvs_vp.calidad()
     
     #list_ir=Variable_IR.update_list_data()
 

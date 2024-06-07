@@ -163,7 +163,7 @@ class calidad:
         # Print prediction info
         print_prediction_info(v_predictions, v_img, 'vertical')
         
-        print_prediction_info(v_predictions, v_mask, 'mask')
+        print_prediction_info(v_pmask, v_mask, 'mask')
 
         #Get type of seedling
         tos = get_type_of_seedling(h_predictions, v_predictions, v_pmask)
