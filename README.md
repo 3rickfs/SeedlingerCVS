@@ -33,11 +33,17 @@ To run the CVS module the following libraries are necessary:
 * **Pymodbus** to connect the CVS with the robot's PLC.
 
 ## Forma de uso
-To run the Seedlinger CVS use the following command:
+To run the Seedlinger CVS:
+1. Turn on the Robot desktop computer, choose the proper Ubuntu Linux version 
+2. If any password is needed, just use the password wireless one of the lab.
+3. Open a terminal and go to /home/robot/seedlinger/SeedlingerCVS
+4. Run the following command
+```
 sudo bash server_calidad.sh
+```
 
 ## Roadmap
-- [] Add a UI to let the user monitor the performance of the seedlinger_cvs module
-- [] Optimize the Seedlinger CVS to run as faster as possible.
-- [] Test first 1.0.0 estable version with real artichoke seedling trays.
+- [ ] Add a UI to let the user monitor the performance of the seedlinger_cvs module
+- [ ] Optimize the Seedlinger CVS to run as faster as possible.
+- [ ] Test first 1.0.0 estable version with real artichoke seedling trays.
 - [x] Launch first stable version.
