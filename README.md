@@ -1,4 +1,4 @@
-# **Pauza.**
+# **Seedlinger Computer Vision System**
 
 <!-- TABLE OF CONTENTS -->
 <details>
