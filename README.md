@@ -35,7 +35,7 @@ To run the CVS module the following libraries are necessary:
 ## Forma de uso
 To run the Seedlinger CVS:
 1. Turn on the Robot desktop computer, choose the proper Ubuntu Linux version 
-2. If any password is needed, just use the password wireless one of the lab.
+2. If any password is needed, just use the internet connection password of the lab.
 3. Open a terminal and go to /home/robot/seedlinger/SeedlingerCVS
 4. Run the following command
 ```
